@@ -36,7 +36,6 @@ export default function Home() {
           <Typography variant="h6">Ptv Inspector Tracker</Typography>
         </Toolbar>
       </AppBar>
-      <UserLocation location={location} />
       <GoogleMap location={location} />
     </div>
   );
