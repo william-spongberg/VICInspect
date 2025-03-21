@@ -7,7 +7,7 @@ Despise inspectors and how they treat passengers, so here's a handy website to r
 
 ## Details
 
-- Open Street Maps for mapping, yay open source
+- Google Maps for mapping
 - Uses your location to pinpoint inspector locations
 - PTV API to track current tram + train locations, so inspectors can be attached to those vehicles
 
