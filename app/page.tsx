@@ -30,28 +30,29 @@ export default function Home() {
   }
 
   return (
-    <div>
+    <>
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6">Ptv Inspector Tracker</Typography>
         </Toolbar>
       </AppBar>
       <GoogleMap location={location} />
-    </div>
+      <UserLocation location={location}/>
+    </>
   );
 }
 
-export interface UserLocationProps {
+export interface LocationProps {
   location: GeolocationPosition | null;
 }
 
-function UserLocation({ location }: UserLocationProps) {
+function UserLocation({ location }: LocationProps) {
   return (
     <div className="location-info">
       {location ? (
         <Typography variant="body1">
           Latitude: {location.coords.latitude}, Longitude:{" "}
-          {location.coords.longitude}
+          {location.coords.longitude}, Accuracy (km): {location.coords.accuracy/1000.0}
         </Typography>
       ) : (
         <Typography variant="body1">Retrieving location...</Typography>

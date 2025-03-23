@@ -4,15 +4,22 @@ import {
   Map,
   AdvancedMarker,
   Pin,
+  MapCameraChangedEvent,
+  InfoWindow,
+  useMap,
 } from "@vis.gl/react-google-maps";
-import { UserLocationProps } from "./page";
+import { LocationProps } from "./page";
+import { useEffect } from "react";
 
 // TODO: add pins for trams
 // TODO: add options for pin, such as delete after 8 hours + select number of inspectors and set multiple pins to cluster
 
-type Poi = { key: string; location: google.maps.LatLngLiteral };
+type Poi = {
+  key: string;
+  location: google.maps.LatLngLiteral;
+};
 
-export function GoogleMap({ location }: UserLocationProps) {
+export function GoogleMap({ location }: LocationProps) {
   if (!location) {
     return <Typography variant="body1">Loading map...</Typography>;
   }
@@ -26,42 +33,61 @@ export function GoogleMap({ location }: UserLocationProps) {
 
   const locations: Poi[] = [
     { key: "operaHouse", location: { lat: -33.8567844, lng: 151.213108 } },
-    { key: "tarongaZoo", location: { lat: -33.8472767, lng: 151.2188164 } },
-    { key: "manlyBeach", location: { lat: -33.8209738, lng: 151.2563253 } },
-    { key: "hyderPark", location: { lat: -33.8690081, lng: 151.2052393 } },
-    { key: "theRocks", location: { lat: -33.8587568, lng: 151.2058246 } },
-    { key: "circularQuay", location: { lat: -33.858761, lng: 151.2055688 } },
-    { key: "harbourBridge", location: { lat: -33.852228, lng: 151.2038374 } },
-    { key: "kingsCross", location: { lat: -33.8737375, lng: 151.222569 } },
-    { key: "botanicGardens", location: { lat: -33.864167, lng: 151.216387 } },
-    { key: "museumOfSydney", location: { lat: -33.8636005, lng: 151.2092542 } },
-    { key: "maritimeMuseum", location: { lat: -33.869395, lng: 151.198648 } },
-    {
-      key: "kingStreetWharf",
-      location: { lat: -33.8665445, lng: 151.1989808 },
-    },
-    { key: "aquarium", location: { lat: -33.869627, lng: 151.202146 } },
-    { key: "darlingHarbour", location: { lat: -33.87488, lng: 151.1987113 } },
-    { key: "barangaroo", location: { lat: -33.8605523, lng: 151.1972205 } },
   ];
 
   return (
-    <APIProvider apiKey={apiKey}>
-      <Map
-        style={{ height: "600px", width: "800px" }}
-        defaultCenter={userLoc}
-        defaultZoom={18}
-        gestureHandling={"greedy"}
-        disableDefaultUI={true}
-        mapId="DEMO_MAP_ID"
-        reuseMaps={true}
-      />
-      <AdvancedMarker position={userLoc} />
-      <PoiMarkers pois={locations} />
-    </APIProvider>
+    <>
+      <APIProvider apiKey={apiKey}>
+        <Map
+          style={{ height: "600px", width: "800px" }}
+          defaultCenter={userLoc}
+          defaultZoom={18}
+          gestureHandling={"greedy"}
+          disableDefaultUI={true}
+          mapId="DEMO_MAP_ID"
+          reuseMaps={true}
+        />
+        <AccuracyCircle location={location} />
+        <AdvancedMarker position={userLoc} />
+        <PoiMarkers pois={locations} />
+      </APIProvider>
+    </>
   );
 }
 
+// draw circle for approximation of user location
+function AccuracyCircle({ location }: LocationProps) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (!location || !map) return;
+    
+    const center = {
+      lat: location.coords.latitude,
+      lng: location.coords.longitude,
+    };
+    
+    // use the google maps circle
+    const accuracyCircle = new google.maps.Circle({
+      strokeColor: "#4285F4",
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: "#4285F4",
+      fillOpacity: 0.15,
+      map: map,
+      center: center,
+      radius: location.coords.accuracy
+    });
+    
+    return () => {
+      accuracyCircle.setMap(null);
+    };
+  }, [location, map]);
+  
+  return null;
+}
+
+// use for trams, trains etc
 function PoiMarkers(props: { pois: Poi[] }) {
   return (
     <>
