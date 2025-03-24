@@ -41,7 +41,7 @@ export default function GoogleMap({
     <>
       <APIProvider apiKey={apiKey} libraries={["visualization"]}>
         <Map
-          style={{ width: MAP_WIDTH, height: MAP_HEIGHT }}
+          style={{ width: "100vw", height: "75vh" }}
           defaultCenter={userLoc}
           defaultZoom={14}
           gestureHandling={"greedy"}
