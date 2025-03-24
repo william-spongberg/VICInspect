@@ -93,6 +93,7 @@ function ReportMarkers({ inspectorReports }: ReportProps) {
         key={report.id}
         title={title}
         colour="white"
+        zIndex={-1}
         location={{ lat: report.latitude, lng: report.longitude }}
       />
     );

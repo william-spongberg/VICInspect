@@ -8,6 +8,7 @@ export interface MarkerProps {
   colour?: string;
   draggable?: boolean;
   accuracy?: number;
+  zIndex?: number;
   onDragEnd?: (location: google.maps.LatLngLiteral) => void;
 }
 
@@ -18,6 +19,7 @@ export default function Marker({
   colour = "#EF0000",
   draggable = false,
   accuracy = 0,
+  zIndex = 0,
   onDragEnd,
 }: MarkerProps) {
   // open info window on click
@@ -51,6 +53,7 @@ export default function Marker({
         onClick={() => setOpen(true)}
         draggable={draggable}
         onDragEnd={handleDragEnd}
+        zIndex={zIndex}
       >
         <Pin background={colour} glyphColor={"#000"} borderColor={"#000"} />
       </AdvancedMarker>
