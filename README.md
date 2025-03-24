@@ -1,53 +1,28 @@
-# Next.js & HeroUI Template
+# PTV Inspector Tracker
 
-This is a template for creating applications using Next.js 14 (app directory) and HeroUI (v2).
+Despise inspectors and how they treat passengers, so here's a handy website to report the exact locations of them at all times. Use to check heatmaps of current locations, report inspectors and remember to share this with your mates!
 
-[Try it on CodeSandbox](https://githubbox.com/heroui-inc/heroui/next-app-template)
+> [!NOTE]
+> Currently a work in progress! Will always remain open source + open to contributers :)
 
-## Technologies Used
+## Details
 
-- [Next.js 14](https://nextjs.org/docs/getting-started)
-- [HeroUI v2](https://heroui.com/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Tailwind Variants](https://tailwind-variants.org)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Framer Motion](https://www.framer.com/motion/)
-- [next-themes](https://github.com/pacocoursey/next-themes)
+### Features
 
-## How to Use
+- Google Maps for mapping ...maybe, still deciding on this. Don't love that it could cost me money
+- Uses your location to pinpoint inspector locations
+- PTV API to track current tram + train locations, so inspectors can be attached to those vehicles
+- Use Supabase (Postgres) for storing inspector locations
 
-### Use the template with create-next-app
+### Framework
 
-To create a new project based on this template using `create-next-app`, run the following command:
+Vercel + NextJS + React + HeroUI + Supabase
 
-```bash
-npx create-next-app -e https://github.com/heroui-inc/next-app-template
-```
+## Next Steps
 
-### Install dependencies
-
-You can use one of them `npm`, `yarn`, `pnpm`, `bun`, Example using `npm`:
-
-```bash
-npm install
-```
-
-### Run the development server
-
-```bash
-npm run dev
-```
-
-### Setup pnpm (optional)
-
-If you are using `pnpm`, you need to add the following code to your `.npmrc` file:
-
-```bash
-public-hoist-pattern[]=*@heroui/*
-```
-
-After modifying the `.npmrc` file, you need to run `pnpm install` again to ensure that the dependencies are installed correctly.
-
-## License
-
-Licensed under the [MIT license](https://github.com/heroui-inc/next-app-template/blob/main/LICENSE).
+- Integrate PTV API - get current tram + train (+ bus?) locations, add option to attach inspectors to these vehicles
+- More security for supabase requests - might need to add users to report inspectors? Could create some sort of leaderboard for most reported inspectors, most reports, etc
+- Merge reports in same location, upvotes them and adds to heatmap weighting
+- Descriptions for reports? Or just link to a facebook group post? Costly space wise, but could be useful
+- A way to report inspectors without location services, just default location to melbourne CBD if location time out or rejected by user
+- Lock Google Maps API to custom domain, also rate limit requests
