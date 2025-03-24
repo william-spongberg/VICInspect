@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Typography } from "@mui/material";
 import { AdvancedMarker, Pin, InfoWindow } from "@vis.gl/react-google-maps";
 import AccuracyCircle from "./accuracy";
 
@@ -62,9 +61,9 @@ export default function Marker({
 
       {open && title.length > 0 && (
         <InfoWindow position={location} onCloseClick={() => setOpen(false)}>
-          <Typography variant="body1" style={{ color: "#000" }}>
+          <div className="text-black">
             {title}
-          </Typography>
+          </div>
         </InfoWindow>
       )}
     </>

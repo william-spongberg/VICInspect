@@ -1,4 +1,3 @@
-import { Typography } from "@mui/material";
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import Marker from "./marker";
 import { InspectorReport } from "@/lib/supabase";
@@ -23,7 +22,7 @@ export default function GoogleMap({
   onLocationChange,
 }: GoogleMapProps) {
   if (!location || !locLatLng) {
-    return <Typography variant="body1">Loading map...</Typography>;
+    return <>Loading map...</>;
   }
 
   const userLoc: google.maps.LatLngLiteral = locLatLng;
