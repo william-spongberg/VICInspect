@@ -2,6 +2,7 @@ import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import Marker from "./marker";
 import { InspectorReport } from "@/lib/supabase";
 import HeatMap from "./heatmap";
+import { Skeleton } from "@heroui/react";
 
 export const MAP_ID = "DEMO_MAP_ID";
 export const MAP_WIDTH = 1000;
@@ -23,7 +24,7 @@ export default function GoogleMap({
   onLocationChange,
 }: GoogleMapProps) {
   if (!location || !locLatLng) {
-    return <>Loading map...</>;
+    return <Skeleton />;
   }
 
   const userLoc: google.maps.LatLngLiteral = locLatLng;
