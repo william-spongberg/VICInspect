@@ -45,6 +45,7 @@ export function GoogleMap({
           mapId="DEMO_MAP_ID"
           reuseMaps={true}
         />
+        <ReportMarkers inspectorReports={inspectorReports} />
         <Marker
           title={"You"}
           location={userLoc}
@@ -52,7 +53,6 @@ export function GoogleMap({
           draggable={true}
           onDragEnd={handleMarkerDragEnd}
         />
-        <ReportMarkers inspectorReports={inspectorReports} />
       </APIProvider>
     </>
   );
