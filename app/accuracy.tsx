@@ -28,10 +28,16 @@ export default function AccuracyCircle({
       radius: accuracy,
     });
 
-    // center and fit map around circle
-    const bounds = accuracyCircle.getBounds();
-    if (bounds) {
-      map.fitBounds(bounds, 50);
+    // center and fit map around circle if not in view
+    const circleBounds = accuracyCircle.getBounds();
+    const currentBounds = map.getBounds();
+    if (circleBounds && currentBounds) {
+      if (
+        !currentBounds.contains(circleBounds.getNorthEast()) ||
+        !currentBounds.contains(circleBounds.getSouthWest())
+      ) {
+        map.fitBounds(circleBounds, 100);
+      }
     }
 
     return () => {
