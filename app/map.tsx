@@ -1,15 +1,6 @@
 import { Typography } from "@mui/material";
-import {
-  APIProvider,
-  Map,
-  AdvancedMarker,
-  Pin,
-  MapCameraChangedEvent,
-  InfoWindow,
-  useMap,
-} from "@vis.gl/react-google-maps";
-import { LocationProps } from "./page";
-import { useEffect } from "react";
+import { APIProvider, Map } from "@vis.gl/react-google-maps";
+import Marker from "./marker";
 
 // TODO: add pins for trams
 // TODO: add options for pin, such as delete after 8 hours + select number of inspectors and set multiple pins to cluster
@@ -19,21 +10,30 @@ type Poi = {
   location: google.maps.LatLngLiteral;
 };
 
-export function GoogleMap({ location }: LocationProps) {
-  if (!location) {
+export interface GoogleMapProps {
+  location: GeolocationPosition | null;
+  locLatLng: google.maps.LatLngLiteral | null;
+  onLocationChange?: (newLocation: google.maps.LatLngLiteral) => void;
+}
+
+export function GoogleMap({ location, locLatLng, onLocationChange }: GoogleMapProps) {
+  if (!location || !locLatLng) {
     return <Typography variant="body1">Loading map...</Typography>;
   }
 
-  const userLoc: google.maps.LatLngLiteral = {
-    lat: location.coords.latitude,
-    lng: location.coords.longitude,
-  };
+  const userLoc: google.maps.LatLngLiteral = locLatLng;
   const apiKey: any = process.env.NEXT_PUBLIC_MAP_API_KEY;
   // TODO: restrict through google cloud to only accept requests from prod website when published
 
   const locations: Poi[] = [
-    { key: "operaHouse", location: { lat: -33.8567844, lng: 151.213108 } },
+    { key: "Melbourne", location: { lat: -36.813629, lng: 144.963058 } },
   ];
+
+  const handleMarkerDragEnd = (newLocation: google.maps.LatLngLiteral) => {
+    if (onLocationChange) {
+      onLocationChange(newLocation);
+    }
+  };
 
   return (
     <>
@@ -41,50 +41,23 @@ export function GoogleMap({ location }: LocationProps) {
         <Map
           style={{ height: "600px", width: "800px" }}
           defaultCenter={userLoc}
-          defaultZoom={18}
+          defaultZoom={16}
           gestureHandling={"greedy"}
           disableDefaultUI={true}
           mapId="DEMO_MAP_ID"
           reuseMaps={true}
         />
-        <AccuracyCircle location={location} />
-        <AdvancedMarker position={userLoc} />
+        <Marker
+          title={"You"}
+          location={userLoc}
+          accuracy={location.coords.accuracy}
+          draggable={true}
+          onDragEnd={handleMarkerDragEnd}
+        />
         <PoiMarkers pois={locations} />
       </APIProvider>
     </>
   );
-}
-
-// draw circle for approximation of user location
-function AccuracyCircle({ location }: LocationProps) {
-  const map = useMap();
-  
-  useEffect(() => {
-    if (!location || !map) return;
-    
-    const center = {
-      lat: location.coords.latitude,
-      lng: location.coords.longitude,
-    };
-    
-    // use the google maps circle
-    const accuracyCircle = new google.maps.Circle({
-      strokeColor: "#4285F4",
-      strokeOpacity: 0.8,
-      strokeWeight: 2,
-      fillColor: "#4285F4",
-      fillOpacity: 0.15,
-      map: map,
-      center: center,
-      radius: location.coords.accuracy
-    });
-    
-    return () => {
-      accuracyCircle.setMap(null);
-    };
-  }, [location, map]);
-  
-  return null;
 }
 
 // use for trams, trains etc
@@ -92,13 +65,7 @@ function PoiMarkers(props: { pois: Poi[] }) {
   return (
     <>
       {props.pois.map((poi: Poi) => (
-        <AdvancedMarker key={poi.key} position={poi.location}>
-          <Pin
-            background={"#FBBC04"}
-            glyphColor={"#000"}
-            borderColor={"#000"}
-          />
-        </AdvancedMarker>
+        <Marker key={poi.key} title={poi.key} location={poi.location} />
       ))}
     </>
   );
