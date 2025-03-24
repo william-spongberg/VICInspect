@@ -55,7 +55,10 @@ export default function Marker({
       >
         <Pin background={colour} glyphColor={"#000"} borderColor={"#000"} />
       </AdvancedMarker>
-      <AccuracyCircle locLatLng={loc} accuracy={radius} />
+
+      {accuracy > 0 &&
+        <AccuracyCircle locLatLng={loc} accuracy={radius} />
+      }
 
       {open && title.length > 0 && (
         <InfoWindow position={location} onCloseClick={() => setOpen(false)}>

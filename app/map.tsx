@@ -2,6 +2,9 @@ import { Typography } from "@mui/material";
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import Marker from "./marker";
 import { InspectorReport } from "@/lib/supabase";
+import HeatMap from "./heatmap";
+
+export const MAP_ID = "DEMO_MAP_ID";
 
 // TODO: add pins for trams
 // TODO: add options for pin, such as delete after 8 hours + select number of inspectors and set multiple pins to cluster
@@ -13,7 +16,7 @@ export interface GoogleMapProps {
   onLocationChange?: (newLocation: google.maps.LatLngLiteral) => void;
 }
 
-export function GoogleMap({
+export default function GoogleMap({
   location,
   locLatLng,
   inspectorReports,
@@ -35,16 +38,19 @@ export function GoogleMap({
 
   return (
     <>
-      <APIProvider apiKey={apiKey}>
+      <APIProvider apiKey={apiKey} libraries={["visualization"]}>
         <Map
           style={{ height: "600px", width: "800px" }}
           defaultCenter={userLoc}
-          defaultZoom={16}
+          defaultZoom={14}
           gestureHandling={"greedy"}
           disableDefaultUI={true}
-          mapId="DEMO_MAP_ID"
+          mapId={MAP_ID}
           reuseMaps={true}
+          maxZoom={18}
+          minZoom={10}
         />
+        <HeatMap inspectorReports={inspectorReports} />
         <ReportMarkers inspectorReports={inspectorReports} />
         <Marker
           title={"You"}
@@ -59,7 +65,7 @@ export function GoogleMap({
 }
 
 // use for trams, trains etc
-interface ReportProps {
+export interface ReportProps {
   inspectorReports: InspectorReport[];
 }
 
@@ -72,17 +78,20 @@ function ReportMarkers({ inspectorReports }: ReportProps) {
       (Date.now() - new Date(report.created_at!).getTime()) / (1000 * 60)
     );
 
-    // convert to hours if more than 60 minutes
+    // title is time last reported, make more human readable
     if (minutesAgo <= 60) {
       title = `reported ${minutesAgo} minute(s) ago`;
-    } else {
+    } else if (minutesAgo >= 1) {
       title = `reported ${Math.floor(minutesAgo / 60)} hour(s) ago`;
+    } else {
+      title = "reported just now";
     }
 
     return (
       <Marker
         key={report.id}
         title={title}
+        colour="white"
         location={{ lat: report.latitude, lng: report.longitude }}
       />
     );

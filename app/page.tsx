@@ -9,7 +9,7 @@ import {
   Alert,
 } from "@mui/material";
 import { useState, useEffect } from "react";
-import { GoogleMap } from "./map";
+import GoogleMap from "./map";
 import {
   reportInspector,
   getRecentReports,
