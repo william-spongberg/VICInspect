@@ -94,6 +94,7 @@ function ReportMarkers({ inspectorReports }: ReportProps) {
         title={title}
         colour="white"
         zIndex={-1}
+        opacity={0.5}
         location={{ lat: report.latitude, lng: report.longitude }}
       />
     );
