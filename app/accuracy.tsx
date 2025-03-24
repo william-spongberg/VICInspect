@@ -28,6 +28,12 @@ export default function AccuracyCircle({
       radius: accuracy,
     });
 
+    // center and fit map around circle
+    const bounds = accuracyCircle.getBounds();
+    if (bounds) {
+      map.fitBounds(bounds, 50);
+    }
+
     return () => {
       accuracyCircle.setMap(null);
     };

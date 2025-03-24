@@ -49,7 +49,7 @@ export default function GoogleMap({
           mapId={MAP_ID}
           reuseMaps={true}
           maxZoom={18}
-          minZoom={10}
+          minZoom={9}
         />
         <HeatMap inspectorReports={inspectorReports} />
         <ReportMarkers inspectorReports={inspectorReports} />

@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import GoogleMap from "./map";
+import GoogleMap, { MAP_WIDTH } from "./map";
 import { Button, Card, CardFooter, addToast } from "@heroui/react";
 import {
   reportInspector,
   getRecentReports,
   InspectorReport,
 } from "../lib/supabase";
-import { MAP_WIDTH } from "./map";
 
 // get last x hours of reports
 const RECENT_REPORTS_HOURS = 24;
