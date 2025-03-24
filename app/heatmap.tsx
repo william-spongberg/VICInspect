@@ -16,8 +16,6 @@ export default function HeatMap({ inspectorReports }: ReportProps) {
     };
   });
 
-  console.log(data);
-
   useEffect(() => {
     if (!map) return;
 

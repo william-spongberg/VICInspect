@@ -125,10 +125,13 @@ export default function Home() {
         />
         <CardFooter className="flex justify-center gap-4 before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
           <Button color="primary" onPress={handleReportInspector}>
-        Report Inspector Here
+            Report Inspector At Me
           </Button>
           <Button color="secondary" onPress={fetchRecentReports}>
-        Refresh
+            Refresh Reports
+          </Button>
+          <Button color="success" onPress={getUserLocation}>
+            Update Location
           </Button>
         </CardFooter>
       </Card>
