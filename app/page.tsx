@@ -66,6 +66,14 @@ export default function Home() {
     // yay grabbed it, set locations
     function success(pos: GeolocationPosition) {
       console.log("yay grabbed location!");
+      // if not first time, send toast
+      if (geoLocation) {
+        addToast({
+          title: "Location found",
+          color: "success",
+          icon: <FaLocationArrow size={20} />,
+        });
+      }
       setGeoLocation(pos);
       setLocLatLng({
         lat: pos.coords.latitude,
@@ -126,7 +134,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center min-h-fit">
       <Card className={`max-w-[${MAP_WIDTH}px]`}>
         <GoogleMap
           location={geoLocation}
@@ -139,6 +147,7 @@ export default function Home() {
             color="secondary"
             onPress={fetchRecentReports}
             className="w-full sm:w-auto"
+            aria-label="Refresh Reports"
           >
             <FaSyncAlt size={20} />
           </Button>
@@ -146,6 +155,7 @@ export default function Home() {
             color="danger"
             onPress={handleReportInspector}
             className="w-full sm:w-auto"
+            aria-label="Report Inspector"
           >
             <FaExclamationCircle size={20} />
           </Button>
@@ -154,6 +164,7 @@ export default function Home() {
             color="success"
             onPress={getUserLocation}
             className="w-full sm:w-auto"
+            aria-label="Get my location"
           >
             <FaLocationArrow size={20} />
           </Button>
