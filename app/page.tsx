@@ -13,6 +13,14 @@ import { MAP_WIDTH } from "./map";
 // get last x hours of reports
 const RECENT_REPORTS_HOURS = 24;
 
+export interface LocLatLngProps {
+  locLatLng: google.maps.LatLngLiteral | null;
+}
+
+export interface LocationProps {
+  location: GeolocationPosition | null;
+}
+
 export default function Home() {
   const [geoLocation, setGeoLocation] = useState<GeolocationPosition | null>(
     null
@@ -125,30 +133,6 @@ export default function Home() {
           </Button>
         </CardFooter>
       </Card>
-    </div>
-  );
-}
-
-export interface LocLatLngProps {
-  locLatLng: google.maps.LatLngLiteral | null;
-}
-
-export interface LocationProps {
-  location: GeolocationPosition | null;
-}
-
-// testing, display user location and accuracy
-function UserLocation({ location }: LocationProps) {
-  return (
-    <div className="location-info">
-      {location ? (
-        <>
-          Latitude: {location.coords.latitude}, Longitude:{" "}
-          {location.coords.longitude}, Accuracy (m): {location.coords.accuracy}
-        </>
-      ) : (
-        <>Retrieving location...</>
-      )}
     </div>
   );
 }
