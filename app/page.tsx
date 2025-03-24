@@ -2,7 +2,17 @@
 
 import { useState, useEffect } from "react";
 import GoogleMap, { MAP_WIDTH } from "./map";
-import { Button, Card, CardFooter, addToast } from "@heroui/react";
+import {
+  Button,
+  Card,
+  CardFooter,
+  addToast,
+} from "@heroui/react";
+import {
+  FaExclamationCircle,
+  FaSyncAlt,
+  FaLocationArrow,
+} from "react-icons/fa";
 import {
   reportInspector,
   getRecentReports,
@@ -46,6 +56,7 @@ export default function Home() {
 
   // get user location from browser
   function getUserLocation() {
+    setGeoLocation(null);
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(success, error);
     } else {
@@ -124,14 +135,27 @@ export default function Home() {
           onLocationChange={handleLocationChange}
         />
         <CardFooter className="flex justify-center gap-4 before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
-          <Button color="primary" onPress={handleReportInspector}>
-            Report Inspector At Me
+          <Button
+            color="secondary"
+            onPress={fetchRecentReports}
+            className="w-full sm:w-auto"
+          >
+            <FaSyncAlt size={20} />
           </Button>
-          <Button color="secondary" onPress={fetchRecentReports}>
-            Refresh Reports
+          <Button
+            color="danger"
+            onPress={handleReportInspector}
+            className="w-full sm:w-auto"
+          >
+            <FaExclamationCircle size={20} />
           </Button>
-          <Button color="success" onPress={getUserLocation}>
-            Update Location
+
+          <Button
+            color="success"
+            onPress={getUserLocation}
+            className="w-full sm:w-auto"
+          >
+            <FaLocationArrow size={20} />
           </Button>
         </CardFooter>
       </Card>
