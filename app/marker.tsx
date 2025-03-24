@@ -21,7 +21,10 @@ export default function Marker({
   accuracy = 0,
   onDragEnd,
 }: MarkerProps) {
+  // open info window on click
   const [open, setOpen] = useState(false);
+
+  // update accuracy circle on location or radius change (on drag)
   const [loc, setLoc] = useState(location);
   const [radius, setRadius] = useState(accuracy);
 
