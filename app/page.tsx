@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from "react";
 import GoogleMap from "./map";
-import { Button, addToast } from "@heroui/react";
+import { Button, Card, CardFooter, addToast } from "@heroui/react";
 import {
   reportInspector,
   getRecentReports,
   InspectorReport,
 } from "../lib/supabase";
+import { MAP_WIDTH } from "./map";
 
 // get last x hours of reports
 const RECENT_REPORTS_HOURS = 24;
@@ -107,16 +108,24 @@ export default function Home() {
   };
 
   return (
-    <>
-      <GoogleMap
-        location={geoLocation}
-        locLatLng={locLatLng}
-        inspectorReports={inspectorReports}
-        onLocationChange={handleLocationChange}
-      />
-      <Button onPress={handleReportInspector}>Report Inspector Here</Button>
-      <Button onPress={fetchRecentReports}>Refresh Reports</Button>
-    </>
+    <div className="flex justify-center">
+      <Card className={`max-w-[${MAP_WIDTH}px]`}>
+        <GoogleMap
+          location={geoLocation}
+          locLatLng={locLatLng}
+          inspectorReports={inspectorReports}
+          onLocationChange={handleLocationChange}
+        />
+        <CardFooter className="flex justify-center gap-4 before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
+          <Button color="primary" onPress={handleReportInspector}>
+        Report Inspector Here
+          </Button>
+          <Button color="secondary" onPress={fetchRecentReports}>
+        Refresh
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
   );
 }
 

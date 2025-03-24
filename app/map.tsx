@@ -4,9 +4,10 @@ import { InspectorReport } from "@/lib/supabase";
 import HeatMap from "./heatmap";
 
 export const MAP_ID = "DEMO_MAP_ID";
+export const MAP_WIDTH = 1000;
+export const MAP_HEIGHT = 600;
 
 // TODO: add pins for trams
-// TODO: add options for pin, such as delete after 8 hours + select number of inspectors and set multiple pins to cluster
 
 export interface GoogleMapProps {
   location: GeolocationPosition | null;
@@ -39,7 +40,7 @@ export default function GoogleMap({
     <>
       <APIProvider apiKey={apiKey} libraries={["visualization"]}>
         <Map
-          style={{ height: "600px", width: "800px" }}
+          style={{ width: MAP_WIDTH, height: MAP_HEIGHT }}
           defaultCenter={userLoc}
           defaultZoom={14}
           gestureHandling={"greedy"}
@@ -78,12 +79,12 @@ function ReportMarkers({ inspectorReports }: ReportProps) {
     );
 
     // title is time last reported, make more human readable
-    if (minutesAgo <= 60) {
-      title = `reported ${minutesAgo} minute(s) ago`;
-    } else if (minutesAgo >= 1) {
-      title = `reported ${Math.floor(minutesAgo / 60)} hour(s) ago`;
-    } else {
+    if (minutesAgo < 1) {
       title = "reported just now";
+    } else if (minutesAgo < 60) {
+      title = `reported ${minutesAgo} minute(s) ago`;
+    } else {
+      title = `reported ${Math.floor(minutesAgo / 60)} hour(s) ago`;
     }
 
     return (
