@@ -17,7 +17,7 @@ import { DRAGGED_ACCURACY } from "../components/marker";
 import GoogleMap, { MAP_WIDTH } from "../components/map";
 
 const TOAST_TIMEOUT = 3000;
-const LOCATION_TIMEOUT = 10000;
+const LOCATION_TIMEOUT = 25000;
 const MELBOURNE_CBD = {
   lat: -37.8136,
   lng: 144.9631,
