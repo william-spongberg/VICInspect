@@ -1,5 +1,6 @@
-import { title, subtitle } from "@/components/primitives";
 import { Link } from "@heroui/link";
+
+import { title, subtitle } from "@/components/primitives";
 
 export default function PrivacyPage() {
   return (
@@ -23,8 +24,8 @@ export default function PrivacyPage() {
         A copy of the Australian Privacy Principles may be obtained from the
         website of The Office of the Australian Information Commissioner at{" "}
         <a
-          href="https://www.oaic.gov.au/"
           className="text-blue-600 hover:underline"
+          href="https://www.oaic.gov.au/"
         >
           https://www.oaic.gov.au/
         </a>
@@ -76,9 +77,9 @@ export default function PrivacyPage() {
 
       <p className={subtitle({})}>
         Sensitive information is defined in the Privacy Act to include
-        information or opinions about matters such as an individual's racial or
-        ethnic origin, political opinions, religious beliefs, or criminal
-        record.
+        information or opinions about matters such as an individual&apos;s
+        racial or ethnic origin, political opinions, religious beliefs, or
+        criminal record.
       </p>
 
       <p className={subtitle({})}>

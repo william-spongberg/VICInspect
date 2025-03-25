@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useMap } from "@vis.gl/react-google-maps";
+
 import { ReportProps } from "./map";
 
 export default function HeatMap({ inspectorReports }: ReportProps) {

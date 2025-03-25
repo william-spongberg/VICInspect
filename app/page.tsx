@@ -1,26 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import GoogleMap, { MAP_WIDTH } from "./map";
-import {
-  Button,
-  Card,
-  CardFooter,
-  addToast,
-} from "@heroui/react";
+import { Button, Card, CardFooter, addToast } from "@heroui/react";
 import {
   FaExclamationCircle,
   FaSyncAlt,
   FaLocationArrow,
 } from "react-icons/fa";
+
 import {
   reportInspector,
   getRecentReports,
   InspectorReport,
 } from "../lib/supabase";
 
-export const RECENT_REPORTS_HOURS = 8;
-export const DRAGGED_ACCURACY = 50;
+import { DRAGGED_ACCURACY } from "./marker";
+import GoogleMap, { MAP_WIDTH } from "./map";
 
 const TOAST_TIMEOUT = 3000;
 
@@ -34,14 +29,14 @@ export interface LocationProps {
 
 export default function Home() {
   const [geoLocation, setGeoLocation] = useState<GeolocationPosition | null>(
-    null
+    null,
   );
   const [locLatLng, setLocLatLng] = useState<google.maps.LatLngLiteral | null>(
-    null
+    null,
   );
   const [dragged, setDragged] = useState(false);
   const [inspectorReports, setInspectorReports] = useState<InspectorReport[]>(
-    []
+    [],
   );
 
   // get user location once
@@ -52,7 +47,8 @@ export default function Home() {
 
   // grab recent reports within x hours
   async function fetchRecentReports() {
-    const reports = await getRecentReports(RECENT_REPORTS_HOURS);
+    const reports = await getRecentReports();
+
     setInspectorReports(reports);
   }
 
@@ -108,6 +104,7 @@ export default function Home() {
         color: "warning",
         timeout: TOAST_TIMEOUT,
       });
+
       return;
     }
 
@@ -115,7 +112,7 @@ export default function Home() {
     const success = await reportInspector(
       locLatLng,
       dragged ? DRAGGED_ACCURACY : geoLocation?.coords.accuracy,
-      inspectorReports
+      inspectorReports,
     );
 
     // if successfully, send toast and refresh reports
@@ -144,37 +141,37 @@ export default function Home() {
     <div className="flex justify-center min-h-fit">
       <Card className={`max-w-[${MAP_WIDTH}px]`}>
         <GoogleMap
-          location={geoLocation}
-          locLatLng={locLatLng}
           inspectorReports={inspectorReports}
+          locLatLng={locLatLng}
+          location={geoLocation}
           onLocationChange={handleLocationChange}
         />
         <CardFooter className="flex justify-center gap-4 before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
           <Button
-          isIconOnly
+            isIconOnly
+            aria-label="Refresh Reports"
+            className="w-full sm:w-auto"
             color="secondary"
             onPress={fetchRecentReports}
-            className="w-full sm:w-auto"
-            aria-label="Refresh Reports"
           >
             <FaSyncAlt size={20} />
           </Button>
           <Button
-          isIconOnly
+            isIconOnly
+            aria-label="Report Inspector"
+            className="w-full sm:w-auto"
             color="danger"
             onPress={handleReportInspector}
-            className="w-full sm:w-auto"
-            aria-label="Report Inspector"
           >
             <FaExclamationCircle size={25} />
           </Button>
 
           <Button
-          isIconOnly
+            isIconOnly
+            aria-label="Get my location"
+            className="w-full sm:w-auto"
             color="success"
             onPress={getUserLocation}
-            className="w-full sm:w-auto"
-            aria-label="Get my location"
           >
             <FaLocationArrow size={20} />
           </Button>

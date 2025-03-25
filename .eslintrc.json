@@ -5,12 +5,6 @@
     "es2021": true,
     "node": true
   },
-  "prettier/prettier": [
-    "error",
-    {
-      "endOfLine": "auto"
-    }
-  ],
   "extends": [
     "plugin:react/recommended",
     "plugin:prettier/recommended",

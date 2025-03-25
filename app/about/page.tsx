@@ -1,9 +1,10 @@
 "use client";
 
-import { title, subtitle } from "@/components/primitives";
-import { Card, CardHeader, CardBody, Button, Link } from "@heroui/react";
+import { Card, CardHeader, CardBody, Button } from "@heroui/react";
 import { FaMap, FaLocationArrow, FaSubway, FaDatabase } from "react-icons/fa";
 import { SiNextdotjs, SiHeroku, SiVercel, SiSupabase } from "react-icons/si";
+
+import { title, subtitle } from "@/components/primitives";
 
 export default function AboutPage() {
   return (
@@ -38,8 +39,8 @@ export default function AboutPage() {
             </CardHeader>
             <CardBody>
               <p>
-                Employs the Google Maps API for mapping; uses markers and heatmaps to
-                display inspector locations.
+                Employs the Google Maps API for mapping; uses markers and
+                heatmaps to display inspector locations.
               </p>
             </CardBody>
           </Card>
@@ -97,12 +98,12 @@ export default function AboutPage() {
           Tech Stack
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-          <a href="https://nextjs.org" target="_blank" rel="noreferrer">
+          <a href="https://nextjs.org" rel="noreferrer" target="_blank">
             <Button
+              className="border-2 border-cyan-400 dark:border-cyan-600 bg-cyan-100 dark:bg-cyan-900/30 flex gap-3 py-3 px-4"
               startContent={
                 <SiNextdotjs className="text-cyan-600 dark:text-cyan-400 text-xl" />
               }
-              className="border-2 border-cyan-400 dark:border-cyan-600 bg-cyan-100 dark:bg-cyan-900/30 flex gap-3 py-3 px-4"
             >
               <h4 className="font-semibold text-cyan-700 dark:text-cyan-300">
                 NextJS + React
@@ -110,12 +111,12 @@ export default function AboutPage() {
             </Button>
           </a>
 
-          <a href="https://www.heroui.com" target="_blank" rel="noreferrer">
+          <a href="https://www.heroui.com" rel="noreferrer" target="_blank">
             <Button
+              className="border-2 border-indigo-400 dark:border-indigo-600 bg-indigo-100 dark:bg-indigo-900/30 flex gap-3 py-3 px-4"
               startContent={
                 <SiHeroku className="text-indigo-600 dark:text-indigo-400 text-xl" />
               }
-              className="border-2 border-indigo-400 dark:border-indigo-600 bg-indigo-100 dark:bg-indigo-900/30 flex gap-3 py-3 px-4"
             >
               <h4 className="font-semibold text-indigo-700 dark:text-indigo-300">
                 HeroUI Library
@@ -123,12 +124,12 @@ export default function AboutPage() {
             </Button>
           </a>
 
-          <a href="https://vercel.com" target="_blank" rel="noreferrer">
+          <a href="https://vercel.com" rel="noreferrer" target="_blank">
             <Button
+              className="border-2 border-pink-400 dark:border-pink-600 bg-pink-100 dark:bg-pink-900/30 flex gap-3 py-3 px-4"
               startContent={
                 <SiVercel className="text-pink-600 dark:text-pink-400 text-xl" />
               }
-              className="border-2 border-pink-400 dark:border-pink-600 bg-pink-100 dark:bg-pink-900/30 flex gap-3 py-3 px-4"
             >
               <h4 className="font-semibold text-pink-700 dark:text-pink-300">
                 Vercel Deploy
@@ -136,12 +137,12 @@ export default function AboutPage() {
             </Button>
           </a>
 
-          <a href="https://supabase.com" target="_blank" rel="noreferrer">
+          <a href="https://supabase.com" rel="noreferrer" target="_blank">
             <Button
+              className="border-2 border-emerald-400 dark:border-emerald-600 bg-emerald-100 dark:bg-emerald-900/30 flex gap-3 py-3 px-4"
               startContent={
                 <SiSupabase className="text-emerald-600 dark:text-emerald-400 text-xl" />
               }
-              className="border-2 border-emerald-400 dark:border-emerald-600 bg-emerald-100 dark:bg-emerald-900/30 flex gap-3 py-3 px-4"
             >
               <h4 className="font-semibold text-emerald-700 dark:text-emerald-300">
                 Supabase DB

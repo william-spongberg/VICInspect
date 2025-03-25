@@ -31,6 +31,7 @@ export default function AccuracyCircle({
     // center and fit map around circle if not in view
     const circleBounds = accuracyCircle.getBounds();
     const currentBounds = map.getBounds();
+
     if (circleBounds && currentBounds) {
       if (
         !currentBounds.contains(circleBounds.getNorthEast()) ||

@@ -15,7 +15,7 @@ export const siteConfig = {
     {
       label: "Privacy",
       href: "/privacy",
-    }
+    },
   ],
   navMenuItems: [
     {
@@ -29,7 +29,7 @@ export const siteConfig = {
     {
       label: "Privacy",
       href: "/privacy",
-    }
+    },
   ],
   links: {
     github: "https://github.com/william-spongberg/ptv-inspector-tracker",

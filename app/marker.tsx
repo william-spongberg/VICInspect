@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { AdvancedMarker, Pin, InfoWindow } from "@vis.gl/react-google-maps";
+
 import AccuracyCircle from "./accuracy";
-import { DRAGGED_ACCURACY } from "./page";
+
+export const DRAGGED_ACCURACY = 50;
 
 export interface MarkerProps {
   title?: string;
@@ -52,25 +54,21 @@ export default function Marker({
   return (
     <>
       <AdvancedMarker
-        position={location}
-        onClick={() => setOpen(true)}
         draggable={draggable}
-        onDragEnd={handleDragEnd}
-        zIndex={zIndex}
+        position={location}
         style={{ opacity: opacity }}
+        zIndex={zIndex}
+        onClick={() => setOpen(true)}
+        onDragEnd={handleDragEnd}
       >
-        <Pin background={colour} glyphColor={"#000"} borderColor={"#000"} />
+        <Pin background={colour} borderColor={"#000"} glyphColor={"#000"} />
       </AdvancedMarker>
 
-      {accuracy > 0 &&
-        <AccuracyCircle locLatLng={loc} accuracy={radius} />
-      }
+      {accuracy > 0 && <AccuracyCircle accuracy={radius} locLatLng={loc} />}
 
       {open && title.length > 0 && (
         <InfoWindow position={location} onCloseClick={() => setOpen(false)}>
-          <div className="text-black">
-            {title}
-          </div>
+          <div className="text-black">{title}</div>
         </InfoWindow>
       )}
     </>

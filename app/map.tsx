@@ -1,8 +1,10 @@
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
-import Marker from "./marker";
-import { InspectorReport } from "@/lib/supabase";
-import HeatMap from "./heatmap";
 import { Skeleton } from "@heroui/react";
+
+import Marker from "./marker";
+import HeatMap from "./heatmap";
+
+import { InspectorReport } from "@/lib/supabase";
 
 export const MAP_ID = "DEMO_MAP_ID";
 export const MAP_WIDTH = 1000;
@@ -49,21 +51,21 @@ export default function GoogleMap({
     <>
       <APIProvider apiKey={apiKey} libraries={["visualization"]}>
         <Map
-          style={{ width: "100vw", height: "75vh" }}
           defaultCenter={userLoc}
           defaultZoom={DEFAULT_ZOOM}
-          gestureHandling={"greedy"}
           disableDefaultUI={true}
+          gestureHandling={"greedy"}
           mapId={MAP_ID}
           maxZoom={MAX_ZOOM}
           minZoom={MIN_ZOOM}
+          style={{ width: "100vw", height: "75vh" }}
         />
         <ReportMarkers inspectorReports={inspectorReports} />
         <Marker
-          title={"You"}
-          location={userLoc}
           accuracy={location.coords.accuracy}
           draggable={true}
+          location={userLoc}
+          title={"You"}
           onDragEnd={handleMarkerDragEnd}
         />
         <HeatMap inspectorReports={inspectorReports} />
@@ -85,7 +87,7 @@ function ReportMarkers({ inspectorReports }: ReportProps) {
     // calc number of minutes since report
     const createdAt = new Date(report.created_at);
     const minutesAgo = Math.floor(
-      (Date.now() - new Date(createdAt).getTime()) / (1000 * 60)
+      (Date.now() - new Date(createdAt).getTime()) / (1000 * 60),
     );
 
     // title is time last reported, make more human readable
@@ -100,11 +102,11 @@ function ReportMarkers({ inspectorReports }: ReportProps) {
     return (
       <Marker
         key={report.id}
-        title={`[${report.id?.toString()}] ${title}`}
         colour="white"
-        zIndex={-1}
-        opacity={0.5}
         location={{ lat: report.latitude, lng: report.longitude }}
+        opacity={0.5}
+        title={`[${report.id?.toString()}] ${title}`}
+        zIndex={-1}
       />
     );
   });
