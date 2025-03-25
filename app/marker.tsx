@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AdvancedMarker, Pin, InfoWindow } from "@vis.gl/react-google-maps";
 import AccuracyCircle from "./accuracy";
+import { DRAGGED_ACCURACY } from "./page";
 
 export interface MarkerProps {
   title?: string;
@@ -40,7 +41,7 @@ export default function Marker({
       });
 
       // super accurate now, user set location manually
-      setRadius(50);
+      setRadius(DRAGGED_ACCURACY);
       setLoc({
         lat: e.latLng.lat(),
         lng: e.latLng.lng(),
