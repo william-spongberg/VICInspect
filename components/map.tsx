@@ -1,13 +1,17 @@
-import { APIProvider, Map, ColorScheme, useMap } from "@vis.gl/react-google-maps";
+import {
+  APIProvider,
+  Map,
+  ColorScheme,
+  useMap,
+} from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
+import { Skeleton } from "@heroui/react";
 
 import Marker from "./marker";
 import HeatMap from "./heatmap";
 
-import { Skeleton } from "@heroui/react";
-
-import { InspectorReport } from "@/lib/supabase";
+import { InspectorReport } from "@/db/supabase";
 
 export const MAP_ID = "DEMO_MAP_ID";
 export const MAP_WIDTH = 1000;
@@ -72,7 +76,7 @@ export default function GoogleMap({
         libraries={["visualization", "maps"]}
         onLoad={handleMapApiLoad}
       >
-        <div style={{ position: "relative", width: "100%", height: "75vh" }}>
+        <div style={{ position: "relative", width: "100%", height: "100%" }}>
           <Skeleton
             isLoaded={mapLoaded}
             style={{

@@ -12,13 +12,12 @@ import {
   reportInspector,
   getRecentReports,
   InspectorReport,
-} from "../lib/supabase";
-
-import { DRAGGED_ACCURACY } from "./marker";
-import GoogleMap, { MAP_WIDTH } from "./map";
+} from "../db/supabase";
+import { DRAGGED_ACCURACY } from "../components/marker";
+import GoogleMap, { MAP_WIDTH } from "../components/map";
 
 const TOAST_TIMEOUT = 3000;
-const LOCATION_TIMEOUT = 5000;
+const LOCATION_TIMEOUT = 10000;
 const MELBOURNE_CBD = {
   lat: -37.8136,
   lng: 144.9631,
@@ -181,8 +180,10 @@ export default function Home() {
   };
 
   return (
-    <div className="flex justify-center min-h-fit">
-      <Card className={`max-w-[${MAP_WIDTH}px] w-full h-[75vh] relative`}>
+    <div className="flex justify-center h-full">
+      <Card
+        className={`max-w-[${MAP_WIDTH}px] w-full min-h-[400px] h-[calc(80vh-6rem)] lg:h-[calc(85vh-6rem)] max-h-[80vh] lg:max-h-[85vh] relative overflow-hidden`}
+      >
         <GoogleMap
           inspectorReports={inspectorReports}
           locLatLng={locLatLng}
