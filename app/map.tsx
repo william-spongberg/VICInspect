@@ -1,4 +1,4 @@
-import { APIProvider, Map, ColorScheme } from "@vis.gl/react-google-maps";
+import { APIProvider, Map, ColorScheme, useMap } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 
@@ -41,7 +41,7 @@ export default function GoogleMap({
     } else {
       setMapTheme(ColorScheme.DARK);
     }
-  }, [theme, resolvedTheme, location]);
+  }, [theme, resolvedTheme]);
 
   // map settings
   const DEFAULT_ZOOM = 15;
@@ -109,12 +109,29 @@ export default function GoogleMap({
                 onDragEnd={handleMarkerDragEnd}
               />
               <HeatMap inspectorReports={inspectorReports} />
+              <PanMapToLocation loc={userLoc} />
             </>
           )}
         </div>
       </APIProvider>
     </>
   );
+}
+
+interface PanProps {
+  loc: google.maps.LatLngLiteral;
+}
+
+function PanMapToLocation({ loc }: PanProps) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (map) {
+      map.panTo(loc);
+    }
+  }, [loc, map]);
+
+  return null;
 }
 
 // use for trams, trains etc
