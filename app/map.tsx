@@ -24,12 +24,20 @@ export default function GoogleMap({
   onLocationChange,
 }: GoogleMapProps) {
   if (!location || !locLatLng) {
-    return <Skeleton />;
+    return <Skeleton style={{ width: "100%", height: "75vh" }} />;
   }
 
+  // map settings
+  const DEFAULT_ZOOM = 15;
+  const MAX_ZOOM = 18;
+  const MIN_ZOOM = 9;
+
+  // user location
   const userLoc: google.maps.LatLngLiteral = locLatLng;
-  const apiKey: any = process.env.NEXT_PUBLIC_MAP_API_KEY;
+
+  // google maps api key
   // TODO: restrict through google cloud to only accept requests from prod website when published
+  const apiKey: any = process.env.NEXT_PUBLIC_MAP_API_KEY;
 
   const handleMarkerDragEnd = (newLocation: google.maps.LatLngLiteral) => {
     if (onLocationChange) {
@@ -43,15 +51,13 @@ export default function GoogleMap({
         <Map
           style={{ width: "100vw", height: "75vh" }}
           defaultCenter={userLoc}
-          defaultZoom={14}
+          defaultZoom={DEFAULT_ZOOM}
           gestureHandling={"greedy"}
           disableDefaultUI={true}
           mapId={MAP_ID}
-          reuseMaps={true}
-          maxZoom={18}
-          minZoom={9}
+          maxZoom={MAX_ZOOM}
+          minZoom={MIN_ZOOM}
         />
-        <HeatMap inspectorReports={inspectorReports} />
         <ReportMarkers inspectorReports={inspectorReports} />
         <Marker
           title={"You"}
@@ -60,6 +66,7 @@ export default function GoogleMap({
           draggable={true}
           onDragEnd={handleMarkerDragEnd}
         />
+        <HeatMap inspectorReports={inspectorReports} />
       </APIProvider>
     </>
   );
@@ -70,13 +77,15 @@ export interface ReportProps {
   inspectorReports: InspectorReport[];
 }
 
+// display all reports on map
 function ReportMarkers({ inspectorReports }: ReportProps) {
   const elements = inspectorReports.map((report: InspectorReport) => {
     let title = "";
 
     // calc number of minutes since report
+    const createdAt = new Date(report.created_at);
     const minutesAgo = Math.floor(
-      (Date.now() - new Date(report.created_at!).getTime()) / (1000 * 60)
+      (Date.now() - new Date(createdAt).getTime()) / (1000 * 60)
     );
 
     // title is time last reported, make more human readable
@@ -91,7 +100,7 @@ function ReportMarkers({ inspectorReports }: ReportProps) {
     return (
       <Marker
         key={report.id}
-        title={title}
+        title={`[${report.id?.toString()}] ${title}`}
         colour="white"
         zIndex={-1}
         opacity={0.5}
