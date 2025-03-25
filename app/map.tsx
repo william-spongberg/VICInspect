@@ -1,8 +1,11 @@
-import { APIProvider, Map } from "@vis.gl/react-google-maps";
-import { Skeleton } from "@heroui/react";
+import { APIProvider, Map, ColorScheme } from "@vis.gl/react-google-maps";
+import { useEffect, useState } from "react";
+import { useTheme } from "next-themes";
 
 import Marker from "./marker";
 import HeatMap from "./heatmap";
+
+import { Skeleton } from "@heroui/react";
 
 import { InspectorReport } from "@/lib/supabase";
 
@@ -14,7 +17,7 @@ export const MAP_HEIGHT = 600;
 
 export interface GoogleMapProps {
   location: GeolocationPosition | null;
-  locLatLng: google.maps.LatLngLiteral | null;
+  locLatLng: google.maps.LatLngLiteral;
   inspectorReports: InspectorReport[];
   onLocationChange?: (newLocation: google.maps.LatLngLiteral) => void;
 }
@@ -25,9 +28,20 @@ export default function GoogleMap({
   inspectorReports,
   onLocationChange,
 }: GoogleMapProps) {
-  if (!location || !locLatLng) {
-    return <Skeleton style={{ width: "100%", height: "75vh" }} />;
-  }
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [mapTheme, setMapTheme] = useState<ColorScheme>(ColorScheme.DARK);
+  const { theme, resolvedTheme } = useTheme();
+
+  useEffect(() => {
+    // change map theme based on user theme
+    const currentTheme = resolvedTheme ?? theme;
+
+    if (currentTheme === "light") {
+      setMapTheme(ColorScheme.LIGHT);
+    } else {
+      setMapTheme(ColorScheme.DARK);
+    }
+  }, [theme, resolvedTheme, location]);
 
   // map settings
   const DEFAULT_ZOOM = 15;
@@ -47,28 +61,57 @@ export default function GoogleMap({
     }
   };
 
+  const handleMapApiLoad = () => {
+    setMapLoaded(true);
+  };
+
   return (
     <>
-      <APIProvider apiKey={apiKey} libraries={["visualization"]}>
-        <Map
-          defaultCenter={userLoc}
-          defaultZoom={DEFAULT_ZOOM}
-          disableDefaultUI={true}
-          gestureHandling={"greedy"}
-          mapId={MAP_ID}
-          maxZoom={MAX_ZOOM}
-          minZoom={MIN_ZOOM}
-          style={{ width: "100vw", height: "75vh" }}
-        />
-        <ReportMarkers inspectorReports={inspectorReports} />
-        <Marker
-          accuracy={location.coords.accuracy}
-          draggable={true}
-          location={userLoc}
-          title={"You"}
-          onDragEnd={handleMarkerDragEnd}
-        />
-        <HeatMap inspectorReports={inspectorReports} />
+      <APIProvider
+        apiKey={apiKey}
+        libraries={["visualization", "maps"]}
+        onLoad={handleMapApiLoad}
+      >
+        <div style={{ position: "relative", width: "100%", height: "75vh" }}>
+          <Skeleton
+            isLoaded={mapLoaded}
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              zIndex: 1,
+            }}
+          />
+          <Map
+            colorScheme={mapTheme}
+            defaultCenter={userLoc}
+            defaultZoom={DEFAULT_ZOOM}
+            disableDefaultUI={true}
+            gestureHandling={"greedy"}
+            mapId={MAP_ID}
+            maxZoom={MAX_ZOOM}
+            minZoom={MIN_ZOOM}
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              zIndex: 2,
+            }}
+          />
+          {mapLoaded && (
+            <>
+              <ReportMarkers inspectorReports={inspectorReports} />
+              <Marker
+                accuracy={location?.coords.accuracy ?? 50}
+                draggable={true}
+                location={userLoc}
+                title={"You"}
+                onDragEnd={handleMarkerDragEnd}
+              />
+              <HeatMap inspectorReports={inspectorReports} />
+            </>
+          )}
+        </div>
       </APIProvider>
     </>
   );

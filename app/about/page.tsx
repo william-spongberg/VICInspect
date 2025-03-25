@@ -226,7 +226,3 @@ export default function AboutPage() {
     </div>
   );
 }
-
-function goToLink(link: string) {
-  window.open(link, "_blank");
-}

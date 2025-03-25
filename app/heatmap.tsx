@@ -20,12 +20,13 @@ export default function HeatMap({ inspectorReports }: ReportProps) {
   const data = inspectorReports.map((report) => {
     const hoursAgo =
       (Date.now() - new Date(report.created_at).getTime()) / (1000 * 60 * 60);
-    const location = new google.maps.LatLng(report.latitude, report.longitude);
 
-    return {
-      location: location,
+    const weighted: google.maps.visualization.WeightedLocation = {
+      location: new google.maps.LatLng(report.latitude, report.longitude),
       weight: report.votes / (hoursAgo + 1),
     };
+
+    return weighted;
   });
 
   useEffect(() => {

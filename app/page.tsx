@@ -18,6 +18,11 @@ import { DRAGGED_ACCURACY } from "./marker";
 import GoogleMap, { MAP_WIDTH } from "./map";
 
 const TOAST_TIMEOUT = 3000;
+const LOCATION_TIMEOUT = 5000;
+const MELBOURNE_CBD = {
+  lat: -37.8136,
+  lng: 144.9631,
+};
 
 export interface LocLatLngProps {
   locLatLng: google.maps.LatLngLiteral | null;
@@ -31,15 +36,14 @@ export default function Home() {
   const [geoLocation, setGeoLocation] = useState<GeolocationPosition | null>(
     null,
   );
-  const [locLatLng, setLocLatLng] = useState<google.maps.LatLngLiteral | null>(
-    null,
-  );
+  const [locLatLng, setLocLatLng] =
+    useState<google.maps.LatLngLiteral>(MELBOURNE_CBD);
   const [dragged, setDragged] = useState(false);
   const [inspectorReports, setInspectorReports] = useState<InspectorReport[]>(
     [],
   );
 
-  // get user location once
+  //get user location and recent reports on load
   useEffect(() => {
     getUserLocation();
     fetchRecentReports();
@@ -54,11 +58,42 @@ export default function Home() {
 
   // get user location from browser
   function getUserLocation() {
-    setGeoLocation(null);
+    let timeoutId: NodeJS.Timeout;
+
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(success, error);
+      // Set a timeout for location retrieval
+      timeoutId = setTimeout(() => {
+        console.log("Location timeout reached, using Melbourne CBD as default");
+        addToast({
+          title: "Location unavailable",
+          description: "Using Melbourne CBD location",
+          color: "warning",
+          icon: <FaLocationArrow size={20} />,
+          timeout: TOAST_TIMEOUT,
+        });
+      }, LOCATION_TIMEOUT);
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          // yay grabbed it, clear timeout
+          clearTimeout(timeoutId);
+          success(pos);
+        },
+        (e) => {
+          // boo error, clear timeout
+          clearTimeout(timeoutId);
+          error(e);
+        },
+      );
     } else {
       console.error("Geolocation is not supported by this browser.");
+      addToast({
+        title: "Location error",
+        description: "Using Melbourne CBD location",
+        color: "warning",
+        icon: <FaLocationArrow size={20} />,
+        timeout: TOAST_TIMEOUT,
+      });
     }
 
     // yay grabbed it, set locations
@@ -83,6 +118,14 @@ export default function Home() {
     // report error if any
     function error(e: any) {
       console.error("Error in getting user location: ", e);
+      addToast({
+        title: "Location error",
+        description: "Using Melbourne CBD location",
+        color: "warning",
+        icon: <FaLocationArrow size={20} />,
+        timeout: TOAST_TIMEOUT,
+      });
+      setLocLatLng(MELBOURNE_CBD);
     }
   }
 
@@ -139,7 +182,7 @@ export default function Home() {
 
   return (
     <div className="flex justify-center min-h-fit">
-      <Card className={`max-w-[${MAP_WIDTH}px]`}>
+      <Card className={`max-w-[${MAP_WIDTH}px] w-full h-[75vh] relative`}>
         <GoogleMap
           inspectorReports={inspectorReports}
           locLatLng={locLatLng}
@@ -165,7 +208,6 @@ export default function Home() {
           >
             <FaExclamationCircle size={25} />
           </Button>
-
           <Button
             isIconOnly
             aria-label="Get my location"
