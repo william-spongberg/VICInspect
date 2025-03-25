@@ -19,8 +19,10 @@ import {
   InspectorReport,
 } from "../lib/supabase";
 
-// get last x hours of reports
-const RECENT_REPORTS_HOURS = 24;
+export const RECENT_REPORTS_HOURS = 8;
+export const DRAGGED_ACCURACY = 50;
+
+const TOAST_TIMEOUT = 3000;
 
 export interface LocLatLngProps {
   locLatLng: google.maps.LatLngLiteral | null;
@@ -72,6 +74,7 @@ export default function Home() {
           title: "Location found",
           color: "success",
           icon: <FaLocationArrow size={20} />,
+          timeout: TOAST_TIMEOUT,
         });
       }
       setGeoLocation(pos);
@@ -103,6 +106,7 @@ export default function Home() {
         title: "Error",
         description: "Location not available yet",
         color: "warning",
+        timeout: TOAST_TIMEOUT,
       });
       return;
     }
@@ -110,7 +114,8 @@ export default function Home() {
     // report inspector location - if dragged report 100m accuracy
     const success = await reportInspector(
       locLatLng,
-      dragged ? 100 : geoLocation?.coords.accuracy
+      dragged ? DRAGGED_ACCURACY : geoLocation?.coords.accuracy,
+      inspectorReports
     );
 
     // if successfully, send toast and refresh reports
@@ -119,6 +124,7 @@ export default function Home() {
         title: "Inspector reported",
         description: "Thank you for reporting!",
         color: "success",
+        timeout: TOAST_TIMEOUT,
       });
 
       // refresh reports
@@ -129,6 +135,7 @@ export default function Home() {
         title: "Error",
         description: "Failed to report inspector",
         color: "danger",
+        timeout: TOAST_TIMEOUT,
       });
     }
   };
@@ -144,6 +151,7 @@ export default function Home() {
         />
         <CardFooter className="flex justify-center gap-4 before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
           <Button
+          isIconOnly
             color="secondary"
             onPress={fetchRecentReports}
             className="w-full sm:w-auto"
@@ -152,15 +160,17 @@ export default function Home() {
             <FaSyncAlt size={20} />
           </Button>
           <Button
+          isIconOnly
             color="danger"
             onPress={handleReportInspector}
             className="w-full sm:w-auto"
             aria-label="Report Inspector"
           >
-            <FaExclamationCircle size={20} />
+            <FaExclamationCircle size={25} />
           </Button>
 
           <Button
+          isIconOnly
             color="success"
             onPress={getUserLocation}
             className="w-full sm:w-auto"
