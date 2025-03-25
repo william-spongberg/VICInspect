@@ -1,0 +1,11 @@
+<svg width="512" height="512" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer Pin Shape -->
+  <path d="M100 10C60 10 30 40 30 80C30 120 100 190 100 190C100 190 170 120 170 80C170 40 140 10 100 10Z" fill="#FF0000" stroke="#B30000" stroke-width="5"/>
+  
+  <!-- Eye Symbol -->
+  <ellipse cx="100" cy="80" rx="40" ry="20" fill="white" stroke="black" stroke-width="4"/>
+  <circle cx="100" cy="80" r="10" fill="black"/>
+  
+  <!-- Map Pin Shadow -->
+  <ellipse cx="100" cy="195" rx="35" ry="10" fill="rgba(0,0,0,0.2)"/>
+</svg>
