@@ -15,6 +15,7 @@ import {
 } from "../db/supabase";
 import { DRAGGED_ACCURACY } from "../components/marker";
 import GoogleMap, { MAP_WIDTH } from "../components/map";
+import { subscribeUser, unsubscribeUser, sendNotification } from "./actions";
 
 const TOAST_TIMEOUT = 3000;
 const LOCATION_TIMEOUT = 25000;
@@ -33,13 +34,13 @@ export interface LocationProps {
 
 export default function Home() {
   const [geoLocation, setGeoLocation] = useState<GeolocationPosition | null>(
-    null,
+    null
   );
   const [locLatLng, setLocLatLng] =
     useState<google.maps.LatLngLiteral>(MELBOURNE_CBD);
   const [dragged, setDragged] = useState(false);
   const [inspectorReports, setInspectorReports] = useState<InspectorReport[]>(
-    [],
+    []
   );
 
   //get user location and recent reports on load
@@ -82,7 +83,7 @@ export default function Home() {
           // boo error, clear timeout
           clearTimeout(timeoutId);
           error(e);
-        },
+        }
       );
     } else {
       console.error("Geolocation is not supported by this browser.");
@@ -154,7 +155,7 @@ export default function Home() {
     const success = await reportInspector(
       locLatLng,
       dragged ? DRAGGED_ACCURACY : geoLocation?.coords.accuracy,
-      inspectorReports,
+      inspectorReports
     );
 
     // if successfully, send toast and refresh reports
@@ -180,46 +181,146 @@ export default function Home() {
   };
 
   return (
-    <div className="flex justify-center h-full">
-      <Card
-        className={`max-w-[${MAP_WIDTH}px] w-full min-h-[400px] h-[calc(80vh-6rem)] lg:h-[calc(85vh-6rem)] max-h-[80vh] lg:max-h-[85vh] relative overflow-hidden`}
-      >
-        <GoogleMap
-          inspectorReports={inspectorReports}
-          locLatLng={locLatLng}
-          location={geoLocation}
-          onLocationChange={handleLocationChange}
-        />
-        <CardFooter className="flex justify-center gap-4 before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
-          <Button
-            isIconOnly
-            aria-label="Refresh Reports"
-            className="w-full sm:w-auto"
-            color="secondary"
-            onPress={fetchRecentReports}
-          >
-            <FaSyncAlt size={20} />
-          </Button>
-          <Button
-            isIconOnly
-            aria-label="Report Inspector"
-            className="w-full sm:w-auto"
-            color="danger"
-            onPress={handleReportInspector}
-          >
-            <FaExclamationCircle size={25} />
-          </Button>
-          <Button
-            isIconOnly
-            aria-label="Get my location"
-            className="w-full sm:w-auto"
-            color="success"
-            onPress={getUserLocation}
-          >
-            <FaLocationArrow size={20} />
-          </Button>
-        </CardFooter>
-      </Card>
+    <>
+      <PushNotificationManager />
+      <div className="flex justify-center h-full">
+        <Card
+          className={`max-w-[${MAP_WIDTH}px] w-full min-h-[400px] h-[calc(80vh-6rem)] lg:h-[calc(85vh-6rem)] max-h-[80vh] lg:max-h-[85vh] relative overflow-hidden`}
+        >
+          <GoogleMap
+            inspectorReports={inspectorReports}
+            locLatLng={locLatLng}
+            location={geoLocation}
+            onLocationChange={handleLocationChange}
+          />
+          <CardFooter className="flex justify-center gap-4 before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
+            <Button
+              isIconOnly
+              aria-label="Refresh Reports"
+              className="w-full sm:w-auto"
+              color="secondary"
+              onPress={fetchRecentReports}
+            >
+              <FaSyncAlt size={20} />
+            </Button>
+            <Button
+              isIconOnly
+              aria-label="Report Inspector"
+              className="w-full sm:w-auto"
+              color="danger"
+              onPress={handleReportInspector}
+            >
+              <FaExclamationCircle size={25} />
+            </Button>
+            <Button
+              isIconOnly
+              aria-label="Get my location"
+              className="w-full sm:w-auto"
+              color="success"
+              onPress={getUserLocation}
+            >
+              <FaLocationArrow size={20} />
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    </>
+  );
+}
+
+// web applet functions
+
+function urlBase64ToUint8Array(base64String: string) {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+
+  return outputArray;
+}
+
+function PushNotificationManager() {
+  const [isSupported, setIsSupported] = useState(false);
+  const [subscription, setSubscription] = useState<PushSubscription | null>(
+    null
+  );
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    if ("serviceWorker" in navigator && "PushManager" in window) {
+      setIsSupported(true);
+      registerServiceWorker();
+    }
+  }, []);
+
+  async function registerServiceWorker() {
+    const registration = await navigator.serviceWorker.register("/sw.js", {
+      scope: "/",
+      updateViaCache: "none",
+    });
+    const sub = await registration.pushManager.getSubscription();
+
+    setSubscription(sub);
+  }
+
+  async function subscribeToPush() {
+    const registration = await navigator.serviceWorker.ready;
+    const sub = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(
+        process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
+      ),
+    });
+
+    setSubscription(sub);
+    const serializedSub = JSON.parse(JSON.stringify(sub));
+
+    await subscribeUser(serializedSub);
+  }
+
+  async function unsubscribeFromPush() {
+    await subscription?.unsubscribe();
+    setSubscription(null);
+    await unsubscribeUser();
+  }
+
+  async function sendTestNotification() {
+    if (subscription) {
+      await sendNotification(message);
+      setMessage("");
+    }
+  }
+
+  if (!isSupported) {
+    return <p>Push notifications are not supported in this browser.</p>;
+  }
+
+  return (
+    <div>
+      <h3>Push Notifications</h3>
+      {subscription ? (
+        <>
+          <p>You are subscribed to push notifications.</p>
+          <button onClick={unsubscribeFromPush}>Unsubscribe</button>
+          <input
+            placeholder="Enter notification message"
+            type="text"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+          <button onClick={sendTestNotification}>Send Test</button>
+        </>
+      ) : (
+        <>
+          <p>You are not subscribed to push notifications.</p>
+          <button onClick={subscribeToPush}>Subscribe</button>
+        </>
+      )}
     </div>
   );
 }
