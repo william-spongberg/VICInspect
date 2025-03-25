@@ -24,7 +24,7 @@ export default function AboutPage() {
       <div className="my-6 p-4 bg-amber-100 dark:bg-amber-900/30 border-l-4 border-amber-500 rounded mb-16">
         <p className="text-amber-800 dark:text-amber-200">
           <strong>NOTE:</strong> Currently a work in progress! You can help out
-          by starring this on GitHub, or by contributing to the project.
+          by starring this on GitHub, or by sharing this website around.
         </p>
       </div>
 
@@ -195,18 +195,6 @@ export default function AboutPage() {
               <p>
                 Add descriptions for reports or link to Facebook group posts,
                 considering storage costs
-              </p>
-            </CardBody>
-          </Card>
-
-          <Card className="border border-default-200">
-            <CardHeader className="flex gap-3">
-              <h4 className="font-semibold">Fallback Location</h4>
-            </CardHeader>
-            <CardBody>
-              <p>
-                Implement reporting without location services; default to
-                Melbourne CBD
               </p>
             </CardBody>
           </Card>
