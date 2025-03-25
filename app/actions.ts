@@ -1,6 +1,6 @@
 'use server'
  
-import webpush from "web-push";
+const webpush = require('web-push');
 
 webpush.setVapidDetails(
   'mailto:william@spongberg.dev',
