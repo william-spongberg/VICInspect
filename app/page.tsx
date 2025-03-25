@@ -15,6 +15,7 @@ import {
 } from "../db/supabase";
 import { DRAGGED_ACCURACY } from "../components/marker";
 import GoogleMap, { MAP_WIDTH } from "../components/map";
+
 import { subscribeUser, unsubscribeUser, sendNotification } from "./actions";
 
 const TOAST_TIMEOUT = 3000;
@@ -34,13 +35,13 @@ export interface LocationProps {
 
 export default function Home() {
   const [geoLocation, setGeoLocation] = useState<GeolocationPosition | null>(
-    null
+    null,
   );
   const [locLatLng, setLocLatLng] =
     useState<google.maps.LatLngLiteral>(MELBOURNE_CBD);
   const [dragged, setDragged] = useState(false);
   const [inspectorReports, setInspectorReports] = useState<InspectorReport[]>(
-    []
+    [],
   );
 
   //get user location and recent reports on load
@@ -83,7 +84,7 @@ export default function Home() {
           // boo error, clear timeout
           clearTimeout(timeoutId);
           error(e);
-        }
+        },
       );
     } else {
       console.error("Geolocation is not supported by this browser.");
@@ -155,7 +156,7 @@ export default function Home() {
     const success = await reportInspector(
       locLatLng,
       dragged ? DRAGGED_ACCURACY : geoLocation?.coords.accuracy,
-      inspectorReports
+      inspectorReports,
     );
 
     // if successfully, send toast and refresh reports
@@ -182,7 +183,6 @@ export default function Home() {
 
   return (
     <>
-      <PushNotificationManager />
       <div className="flex justify-center h-full">
         <Card
           className={`max-w-[${MAP_WIDTH}px] w-full min-h-[400px] h-[calc(80vh-6rem)] lg:h-[calc(85vh-6rem)] max-h-[80vh] lg:max-h-[85vh] relative overflow-hidden`}
@@ -224,6 +224,7 @@ export default function Home() {
           </CardFooter>
         </Card>
       </div>
+      <PushNotificationManager />
     </>
   );
 }
@@ -247,7 +248,7 @@ function urlBase64ToUint8Array(base64String: string) {
 function PushNotificationManager() {
   const [isSupported, setIsSupported] = useState(false);
   const [subscription, setSubscription] = useState<PushSubscription | null>(
-    null
+    null,
   );
   const [message, setMessage] = useState("");
 
@@ -273,7 +274,7 @@ function PushNotificationManager() {
     const sub = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(
-        process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
+        process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
       ),
     });
 
@@ -301,24 +302,46 @@ function PushNotificationManager() {
   }
 
   return (
-    <div>
-      <h3>Push Notifications</h3>
+    <div className="p-4 rounded shadow-md">
+      <h3 className="text-xl font-semibold mb-4">Push Notifications</h3>
       {subscription ? (
         <>
-          <p>You are subscribed to push notifications.</p>
-          <button onClick={unsubscribeFromPush}>Unsubscribe</button>
-          <input
-            placeholder="Enter notification message"
-            type="text"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-          />
-          <button onClick={sendTestNotification}>Send Test</button>
+          <p className="mb-2 text-gray-700">
+            You are subscribed to push notifications.
+          </p>
+          <button
+            className="mb-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+            onClick={unsubscribeFromPush}
+          >
+            Unsubscribe
+          </button>
+          <div className="flex gap-2 mb-4">
+            <input
+              className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300"
+              placeholder="Enter notification message"
+              type="text"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
+            <button
+              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
+              onClick={sendTestNotification}
+            >
+              Send Test
+            </button>
+          </div>
         </>
       ) : (
         <>
-          <p>You are not subscribed to push notifications.</p>
-          <button onClick={subscribeToPush}>Subscribe</button>
+          <p className="mb-2 text-gray-700">
+            You are not subscribed to push notifications.
+          </p>
+          <button
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+            onClick={subscribeToPush}
+          >
+            Subscribe
+          </button>
         </>
       )}
     </div>
