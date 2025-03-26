@@ -1,9 +1,10 @@
 "use client";
 
-import { useAuth } from "../../context/auth-context";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Button } from "@heroui/button";
+
+import { useAuth } from "../../context/auth-context";
 
 export default function Dashboard() {
   const { user, signOut, isLoading } = useAuth();
@@ -41,11 +42,7 @@ export default function Dashboard() {
         </p>
       </div>
 
-      <Button
-        onPress={signOut}
-        variant="bordered"
-        color="danger"
-      >
+      <Button color="danger" variant="bordered" onPress={signOut}>
         Sign Out
       </Button>
     </div>

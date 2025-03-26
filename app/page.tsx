@@ -26,13 +26,13 @@ const MELBOURNE_CBD = {
 
 export default function Home() {
   const [geoLocation, setGeoLocation] = useState<GeolocationPosition | null>(
-    null
+    null,
   );
   const [userLocation, setUserLocation] =
     useState<google.maps.LatLngLiteral>(MELBOURNE_CBD);
   const [dragged, setDragged] = useState(false);
   const [inspectorReports, setInspectorReports] = useState<InspectorReport[]>(
-    []
+    [],
   );
 
   // refresh once on load
@@ -74,7 +74,7 @@ export default function Home() {
           // boo error, clear timeout
           clearTimeout(timeoutId);
           error(e);
-        }
+        },
       );
     } else {
       console.error("Geolocation is not supported by this browser.");
@@ -150,6 +150,7 @@ export default function Home() {
           color: "warning",
           timeout: TOAST_TIMEOUT,
         });
+
         return;
       }
 
@@ -167,7 +168,7 @@ export default function Home() {
       errorCallback,
       userLocation,
       dragged ? DRAGGED_ACCURACY : geoLocation?.coords.accuracy,
-      inspectorReports
+      inspectorReports,
     );
 
     // if successfully, send toast and refresh reports
@@ -197,28 +198,28 @@ export default function Home() {
             userLocation={userLocation}
             onLocationChange={handleLocationChange}
           />
-            <CardFooter className="flex justify-center gap-4 overflow-hidden py-3 absolute bottom-1 left-1/2 transform -translate-x-1/2 before:rounded-xl rounded-large w-[calc(100%-8px)] lg:w-auto z-10">
-              <Button
-                aria-label="Refresh"
-                className="w-full sm:w-auto text-lg"
-                color="primary"
-                variant="flat"
-                startContent={<FaSyncAlt />}
-                onPress={refresh}
-              >
-                Refresh
-              </Button>
-              <Button
-                aria-label="Report Inspector"
-                className="w-full sm:w-auto text-lg"
-                color="danger"
-                variant="bordered"
-                startContent={<FaExclamationCircle />}
-                onPress={handleReportInspector}
-              >
-                Report
-              </Button>
-            </CardFooter>
+          <CardFooter className="flex justify-center gap-4 overflow-hidden py-3 absolute bottom-1 left-1/2 transform -translate-x-1/2 before:rounded-xl rounded-large w-[calc(100%-8px)] lg:w-auto z-10">
+            <Button
+              aria-label="Refresh"
+              className="w-full sm:w-auto text-lg"
+              color="primary"
+              startContent={<FaSyncAlt />}
+              variant="flat"
+              onPress={refresh}
+            >
+              Refresh
+            </Button>
+            <Button
+              aria-label="Report Inspector"
+              className="w-full sm:w-auto text-lg"
+              color="danger"
+              startContent={<FaExclamationCircle />}
+              variant="bordered"
+              onPress={handleReportInspector}
+            >
+              Report
+            </Button>
+          </CardFooter>
         </Card>
       </div>
       <PushNotificationManager />

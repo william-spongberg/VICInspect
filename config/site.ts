@@ -19,7 +19,7 @@ export const siteConfig = {
     {
       label: "Dashboard",
       href: "/dashboard",
-    }
+    },
   ],
   navMenuItems: [
     {
@@ -37,7 +37,7 @@ export const siteConfig = {
     {
       label: "Dashboard",
       href: "/dashboard",
-    }
+    },
   ],
   links: {
     github: "https://github.com/william-spongberg/ptv-inspector-tracker",

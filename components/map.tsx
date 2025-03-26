@@ -77,8 +77,8 @@ export default function GoogleMap({
       >
         <div className="relative w-full h-full">
           <Skeleton
-            isLoaded={mapLoaded}
             className="absolute w-full h-full z-[1]"
+            isLoaded={mapLoaded}
           />
           {mapLoaded && (
             <>

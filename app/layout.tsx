@@ -3,8 +3,9 @@ import { Metadata, Viewport } from "next";
 import { Link } from "@heroui/link";
 import clsx from "clsx";
 
+import { AuthProvider } from "../context/auth-context";
+
 import { Providers } from "./providers";
-import { AuthProvider } from '../context/auth-context';
 
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";

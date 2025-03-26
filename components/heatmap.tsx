@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useMap } from "@vis.gl/react-google-maps";
-import { getReportVotes } from "@/lib/supabase";
+
 import { ReportProps } from "./map";
+
+import { getReportVotes } from "@/lib/supabase";
 
 export default function HeatMap({ inspectorReports }: ReportProps) {
   // grab map from context
@@ -33,7 +35,7 @@ export default function HeatMap({ inspectorReports }: ReportProps) {
             location: new google.maps.LatLng(report.latitude, report.longitude),
             weight: (votes + 1) / (hoursAgo + 1),
           };
-        })
+        }),
       );
 
       setHeatmapData(weightedData);

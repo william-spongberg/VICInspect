@@ -27,10 +27,13 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 // get the current session
 export const getSession = async () => {
   const { data, error } = await supabase.auth.getSession();
+
   if (error) {
     console.error("Error getting session:", error);
+
     return null;
   }
+
   return data.session;
 };
 
@@ -39,7 +42,7 @@ export async function reportInspector(
   errorCallback: (error: any) => void,
   location: google.maps.LatLngLiteral,
   accuracy?: number,
-  inspectorReports?: InspectorReport[]
+  inspectorReports?: InspectorReport[],
 ): Promise<boolean> {
   try {
     // find if very similar location (within 50m) has already been reported
@@ -70,13 +73,14 @@ export async function reportInspector(
     return true;
   } catch (error) {
     errorCallback(error);
+
     return false;
   }
 }
 
 // get recent inspector reports
 export async function getRecentReports(
-  hours = RECENT_REPORTS_HOURS
+  hours = RECENT_REPORTS_HOURS,
 ): Promise<InspectorReport[]> {
   try {
     // grab all reports from the last 'x' hours
@@ -85,7 +89,7 @@ export async function getRecentReports(
       .select("*")
       .gte(
         "created_at",
-        new Date(Date.now() - hours * 60 * 60 * 1000).toISOString()
+        new Date(Date.now() - hours * 60 * 60 * 1000).toISOString(),
       )
       .order("created_at", { ascending: false });
 

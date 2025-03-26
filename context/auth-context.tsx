@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
-import { Session, User } from '@supabase/supabase-js';
-import { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase';
+import { Session, User } from "@supabase/supabase-js";
+import { createContext, useContext, useEffect, useState } from "react";
+
+import { supabase } from "../lib/supabase";
 
 interface AuthContextProps {
   user: User | null;
@@ -15,7 +16,7 @@ const AuthContext = createContext<AuthContextProps>({
   user: null,
   session: null,
   isLoading: true,
-  signOut: async () => {}
+  signOut: async () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -29,7 +30,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // check for active session on paint
     async function getActiveSession() {
       setIsLoading(true);
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       setSession(session);
       setUser(session?.user ?? null);
       setIsLoading(false);
@@ -37,7 +41,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     getActiveSession();
 
     // if session changes, update user
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       setIsLoading(false);
@@ -53,12 +59,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   // provide user, session, loading state and signOut function to whole app
-  const value = ({
+  const value = {
     user,
     session,
     isLoading,
-    signOut
-  });
+    signOut,
+  };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
