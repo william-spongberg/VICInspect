@@ -172,7 +172,7 @@ export default function AboutPage() {
               <h4 className="font-semibold">Facebook Auth</h4>
             </CardHeader>
             <CardBody>
-              <p>Add Facebook authentication using Supabase</p>
+              <p>Add Facebook and Github authentication using Supabase</p>
             </CardBody>
           </Card>
 

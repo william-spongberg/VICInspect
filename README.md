@@ -21,8 +21,7 @@ Vercel + NextJS + React + HeroUI + Supabase
 ## Next Steps
 
 - Integrate PTV API - get current tram + train (+ bus?) locations, add option to attach inspectors to these vehicles
-- Add Facebook auth using supabase
+- Add Github + Facebook auth using supabase
 - Could create some sort of leaderboard for most reports, most upvoted reports, etc
 - Descriptions for reports? Or just link to a facebook group post? Costly space wise, but could be useful
-- A way to report inspectors without location services, just default location to melbourne CBD if location time out or rejected by user
 - Lock Google Maps API to custom domain, also rate limit requests
