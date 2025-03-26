@@ -184,7 +184,7 @@ export default function Home() {
     <>
       <div className="flex justify-center h-full">
         <Card
-          className={`max-w-[${MAP_WIDTH}px] w-full min-h-[400px] mb-32 relative overflow-hidden`}
+          className={`max-w-[${MAP_WIDTH}px] w-full max-h-dvh mb-16 relative overflow-hidden`}
         >
           <GoogleMap
             inspectorReports={inspectorReports}
