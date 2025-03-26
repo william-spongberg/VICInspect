@@ -2,19 +2,19 @@ import { useEffect } from "react";
 import { useMap } from "@vis.gl/react-google-maps";
 
 export interface AccuracyCircleProps {
-  locLatLng: google.maps.LatLngLiteral;
+  location: google.maps.LatLngLiteral;
   accuracy: number;
 }
 
 // draw circle for accuracy of user location
 export default function AccuracyCircle({
-  locLatLng,
+  location,
   accuracy,
 }: AccuracyCircleProps) {
   const map = useMap();
 
   useEffect(() => {
-    if (!locLatLng || !map) return;
+    if (!location || !map || accuracy <= 0) return;
 
     // use the google maps circle
     const accuracyCircle = new google.maps.Circle({
@@ -24,7 +24,7 @@ export default function AccuracyCircle({
       fillColor: "#4285F4",
       fillOpacity: 0.15,
       map: map,
-      center: locLatLng,
+      center: location,
       radius: accuracy,
     });
 
@@ -44,7 +44,7 @@ export default function AccuracyCircle({
     return () => {
       accuracyCircle.setMap(null);
     };
-  }, [locLatLng, accuracy, map]);
+  }, [location, accuracy, map]);
 
   return null;
 }

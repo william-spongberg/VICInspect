@@ -31,7 +31,6 @@ export default function Marker({
   const [open, setOpen] = useState(false);
 
   // update accuracy circle on location or radius change (on drag)
-  const [loc, setLoc] = useState(location);
   const [radius, setRadius] = useState(accuracy);
 
   // update location after user finishes dragging marker
@@ -44,10 +43,6 @@ export default function Marker({
 
       // super accurate now, user set location manually
       setRadius(DRAGGED_ACCURACY);
-      setLoc({
-        lat: e.latLng.lat(),
-        lng: e.latLng.lng(),
-      });
     }
   };
 
@@ -64,7 +59,7 @@ export default function Marker({
         <Pin background={colour} borderColor={"#000"} glyphColor={"#000"} />
       </AdvancedMarker>
 
-      {accuracy > 0 && <AccuracyCircle accuracy={radius} locLatLng={loc} />}
+      <AccuracyCircle accuracy={radius} location={location} />
 
       {open && title.length > 0 && (
         <InfoWindow position={location} onCloseClick={() => setOpen(false)}>
