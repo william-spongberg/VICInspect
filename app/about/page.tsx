@@ -14,10 +14,10 @@ export default function AboutPage() {
       </h1>
 
       <p className={subtitle()}>
-        Due to concerns about how PTV inspectors have been treating passengers,
-        this website serves as a platform for reporting the precise locations of
-        these inspectors at all times and allow users to readjust their trips
-        accordingly.
+        Due to concerns about how Public Transport Victoria inspectors have been
+        treating passengers, this website serves as a platform for reporting the
+        precise locations of these inspectors at all times and allow users to
+        readjust their trips accordingly.
       </p>
 
       <div className="my-6 p-4 bg-amber-100 dark:bg-amber-900/30 border-l-4 border-amber-500 rounded mb-16">
