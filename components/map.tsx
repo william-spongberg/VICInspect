@@ -167,7 +167,7 @@ function ReportMarkers({ inspectorReports }: ReportProps) {
         key={report.id}
         colour="white"
         location={{ lat: report.latitude, lng: report.longitude }}
-        opacity={0.5}
+        opacity={0}
         title={`[${report.id?.toString()}] ${title}`}
         zIndex={-1}
       />
