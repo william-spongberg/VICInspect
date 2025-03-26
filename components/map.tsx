@@ -20,15 +20,15 @@ export const MAP_HEIGHT = 600;
 // TODO: add pins for trams
 
 export interface GoogleMapProps {
-  location: GeolocationPosition | null;
-  locLatLng: google.maps.LatLngLiteral;
+  geoLocation: GeolocationPosition | null;
+  userLocation: google.maps.LatLngLiteral;
   inspectorReports: InspectorReport[];
   onLocationChange?: (newLocation: google.maps.LatLngLiteral) => void;
 }
 
 export default function GoogleMap({
-  location,
-  locLatLng,
+  geoLocation,
+  userLocation,
   inspectorReports,
   onLocationChange,
 }: GoogleMapProps) {
@@ -47,13 +47,12 @@ export default function GoogleMap({
     }
   }, [theme, resolvedTheme]);
 
+  useEffect(() => {}, [geoLocation, userLocation]);
+
   // map settings
   const DEFAULT_ZOOM = 15;
   const MAX_ZOOM = 18;
   const MIN_ZOOM = 9;
-
-  // user location
-  const userLoc: google.maps.LatLngLiteral = locLatLng;
 
   // google maps api key
   // TODO: restrict through google cloud to only accept requests from prod website when published
@@ -86,34 +85,34 @@ export default function GoogleMap({
               zIndex: 1,
             }}
           />
-          <Map
-            colorScheme={mapTheme}
-            defaultCenter={userLoc}
-            defaultZoom={DEFAULT_ZOOM}
-            disableDefaultUI={true}
-            gestureHandling={"greedy"}
-            mapId={MAP_ID}
-            maxZoom={MAX_ZOOM}
-            minZoom={MIN_ZOOM}
-            style={{
-              position: "absolute",
-              width: "100%",
-              height: "100%",
-              zIndex: 2,
-            }}
-          />
           {mapLoaded && (
             <>
+              <Map
+                colorScheme={mapTheme}
+                defaultCenter={userLocation}
+                defaultZoom={DEFAULT_ZOOM}
+                disableDefaultUI={true}
+                gestureHandling={"greedy"}
+                mapId={MAP_ID}
+                maxZoom={MAX_ZOOM}
+                minZoom={MIN_ZOOM}
+                style={{
+                  position: "absolute",
+                  width: "100%",
+                  height: "100%",
+                  zIndex: 2,
+                }}
+              />
               <ReportMarkers inspectorReports={inspectorReports} />
               <Marker
-                accuracy={location?.coords.accuracy ?? 50}
+                accuracy={geoLocation?.coords.accuracy ?? 50}
                 draggable={true}
-                location={userLoc}
+                location={userLocation}
                 title={"You"}
                 onDragEnd={handleMarkerDragEnd}
               />
               <HeatMap inspectorReports={inspectorReports} />
-              <PanMapToLocation loc={userLoc} />
+              <PanMapToLocation location={userLocation} />
             </>
           )}
         </div>
@@ -123,17 +122,17 @@ export default function GoogleMap({
 }
 
 interface PanProps {
-  loc: google.maps.LatLngLiteral;
+  location: google.maps.LatLngLiteral;
 }
 
-function PanMapToLocation({ loc }: PanProps) {
+function PanMapToLocation({ location }: PanProps) {
   const map = useMap();
 
   useEffect(() => {
     if (map) {
-      map.panTo(loc);
+      map.panTo(location);
     }
-  }, [loc, map]);
+  }, [location, map]);
 
   return null;
 }
