@@ -58,7 +58,7 @@ export async function reportInspector(
 
       if (session?.user?.id === similarReport.user_id) {
         const { error } = await supabase
-          .from("inspector_sightings")
+          .from(DB_REPORTS_TABLE)
           .update({
             created_at: new Date().toISOString(),
             votes: similarReport.votes + 1,
