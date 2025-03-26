@@ -33,6 +33,8 @@ export default function Home() {
   const [inspectorReports, setInspectorReports] = useState<InspectorReport[]>(
     [],
   );
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isReporting, setIsReporting] = useState(false);
 
   // refresh once on load
   useEffect(() => {
@@ -51,7 +53,7 @@ export default function Home() {
     let timeoutId: NodeJS.Timeout;
 
     if (navigator.geolocation) {
-      // Set a timeout for location retrieval
+      // set a timeout for location retrieval
       timeoutId = setTimeout(() => {
         console.log("Location timeout reached, using Melbourne CBD as default");
         addToast({
@@ -65,12 +67,12 @@ export default function Home() {
 
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          // yay grabbed it, clear timeout
+          // yay grabbed it
           clearTimeout(timeoutId);
           success(pos);
         },
         (e) => {
-          // boo error, clear timeout
+          // boo error
           clearTimeout(timeoutId);
           error(e);
         },
@@ -100,23 +102,23 @@ export default function Home() {
     function error(e: any) {
       console.error("Error in getting user location: ", e);
       // toast error if first time getting location
-      if (!geoLocation) {
-        addToast({
-          title: "Location error",
-          description: "Using Melbourne CBD location",
-          color: "warning",
-          icon: <FaLocationArrow size={20} />,
-          timeout: TOAST_TIMEOUT,
-        });
-      }
+      addToast({
+        title: "Location error",
+        description: "Using Melbourne CBD location",
+        color: "warning",
+        icon: <FaLocationArrow size={20} />,
+        timeout: TOAST_TIMEOUT,
+      });
       setUserLocation(MELBOURNE_CBD);
     }
   }
 
   // refresh location and reports
   async function refresh() {
+    setIsRefreshing(true);
     await refreshReports();
     refreshLocation();
+    setIsRefreshing(false);
   }
 
   // update location for new lat lng
@@ -129,6 +131,8 @@ export default function Home() {
   // use const since using async
   // report current location as an inspector
   const handleReportInspector = async () => {
+    setIsReporting(true);
+
     // if location not available, send error toast
     if (!userLocation) {
       addToast({
@@ -137,6 +141,7 @@ export default function Home() {
         color: "warning",
         timeout: TOAST_TIMEOUT,
       });
+      setIsReporting(false);
 
       return;
     }
@@ -149,6 +154,7 @@ export default function Home() {
           color: "warning",
           timeout: TOAST_TIMEOUT,
         });
+        setIsReporting(false);
 
         return;
       }
@@ -159,6 +165,7 @@ export default function Home() {
         color: "danger",
         timeout: TOAST_TIMEOUT,
       });
+      setIsReporting(false);
       console.error("Error reporting inspector:", error);
     };
 
@@ -178,6 +185,7 @@ export default function Home() {
         color: "success",
         timeout: TOAST_TIMEOUT,
       });
+      setIsReporting(false);
 
       // refresh reports
       refreshReports();
@@ -202,7 +210,8 @@ export default function Home() {
               aria-label="Refresh"
               className="w-full sm:w-auto text-lg"
               color="primary"
-              startContent={<FaSyncAlt />}
+              isLoading={isRefreshing}
+              startContent={!isRefreshing && <FaSyncAlt />}
               variant="flat"
               onPress={refresh}
             >
@@ -212,7 +221,8 @@ export default function Home() {
               aria-label="Report Inspector"
               className="w-full sm:w-auto text-lg"
               color="danger"
-              startContent={<FaExclamationCircle />}
+              isLoading={isReporting}
+              startContent={!isReporting && <FaExclamationCircle />}
               variant="bordered"
               onPress={handleReportInspector}
             >
