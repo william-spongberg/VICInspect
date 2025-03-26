@@ -11,7 +11,7 @@ import { Skeleton } from "@heroui/react";
 import Marker from "./marker";
 import HeatMap from "./heatmap";
 
-import { InspectorReport } from "@/db/supabase";
+import { InspectorReport } from "@/lib/supabase";
 
 export const MAP_ID = "DEMO_MAP_ID";
 export const MAP_WIDTH = 1000;
@@ -75,15 +75,10 @@ export default function GoogleMap({
         libraries={["visualization", "maps"]}
         onLoad={handleMapApiLoad}
       >
-        <div style={{ position: "relative", width: "100%", height: "100%" }}>
+        <div className="relative w-full h-full">
           <Skeleton
             isLoaded={mapLoaded}
-            style={{
-              position: "absolute",
-              width: "100%",
-              height: "100%",
-              zIndex: 1,
-            }}
+            className="absolute w-full h-full z-[1]"
           />
           {mapLoaded && (
             <>

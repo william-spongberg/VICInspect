@@ -1,11 +1,14 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useMap } from "@vis.gl/react-google-maps";
-
+import { getReportVotes } from "@/lib/supabase";
 import { ReportProps } from "./map";
 
 export default function HeatMap({ inspectorReports }: ReportProps) {
   // grab map from context
   const map = useMap();
+  const [heatmapData, setHeatmapData] = useState<
+    google.maps.visualization.WeightedLocation[]
+  >([]);
 
   // heatmap settings
   const HEATMAP_RADIUS = 25;
@@ -16,25 +19,35 @@ export default function HeatMap({ inspectorReports }: ReportProps) {
     "rgba(128,0,128,1)",
   ];
 
-  // add extra weighting to data depending on timestamp
-  const data = inspectorReports.map((report) => {
-    const hoursAgo =
-      (Date.now() - new Date(report.created_at).getTime()) / (1000 * 60 * 60);
+  // Process reports and create heatmap data
+  useEffect(() => {
+    const fetchVotesAndCreateData = async () => {
+      const weightedData = await Promise.all(
+        inspectorReports.map(async (report) => {
+          const hoursAgo =
+            (Date.now() - new Date(report.created_at).getTime()) /
+            (1000 * 60 * 60);
+          const votes = await getReportVotes(report.id);
 
-    const weighted: google.maps.visualization.WeightedLocation = {
-      location: new google.maps.LatLng(report.latitude, report.longitude),
-      weight: report.votes / (hoursAgo + 1),
+          return {
+            location: new google.maps.LatLng(report.latitude, report.longitude),
+            weight: (votes + 1) / (hoursAgo + 1),
+          };
+        })
+      );
+
+      setHeatmapData(weightedData);
     };
 
-    return weighted;
-  });
+    fetchVotesAndCreateData();
+  }, [inspectorReports]);
 
   useEffect(() => {
-    if (!map) return;
+    if (!map || heatmapData.length === 0) return;
 
     // use the google maps heatmap
     const heatmap = new google.maps.visualization.HeatmapLayer({
-      data: data,
+      data: heatmapData,
       radius: HEATMAP_RADIUS,
       gradient: HEATMAP_GRADIENT,
     });
@@ -44,7 +57,7 @@ export default function HeatMap({ inspectorReports }: ReportProps) {
     return () => {
       heatmap.setMap(null);
     };
-  }, [data, map]);
+  }, [heatmapData, map]);
 
   return null;
 }

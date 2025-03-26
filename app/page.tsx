@@ -12,7 +12,7 @@ import {
   reportInspector,
   getRecentReports,
   InspectorReport,
-} from "@/db/supabase";
+} from "@/lib/supabase";
 import { DRAGGED_ACCURACY } from "@/components/marker";
 import GoogleMap, { MAP_WIDTH } from "@/components/map";
 import PushNotificationManager from "@/components/push";
@@ -142,11 +142,32 @@ export default function Home() {
       return;
     }
 
+    const errorCallback = (error: any) => {
+      if (error.code === "42501") {
+        addToast({
+          title: "Error",
+          description: "You need to be signed in to report inspectors",
+          color: "warning",
+          timeout: TOAST_TIMEOUT,
+        });
+        return;
+      }
+
+      addToast({
+        title: "Error",
+        description: "Failed to report inspector",
+        color: "danger",
+        timeout: TOAST_TIMEOUT,
+      });
+      console.error("Error reporting inspector:", error);
+    };
+
     // report inspector location - if dragged report 100m accuracy
     const success = await reportInspector(
+      errorCallback,
       userLocation,
       dragged ? DRAGGED_ACCURACY : geoLocation?.coords.accuracy,
-      inspectorReports,
+      inspectorReports
     );
 
     // if successfully, send toast and refresh reports
@@ -160,14 +181,6 @@ export default function Home() {
 
       // refresh reports
       refreshReports();
-    } else {
-      // if failed, send error toast
-      addToast({
-        title: "Error",
-        description: "Failed to report inspector",
-        color: "danger",
-        timeout: TOAST_TIMEOUT,
-      });
     }
   };
 
@@ -175,6 +188,7 @@ export default function Home() {
     <>
       <div className="flex justify-center h-full">
         <Card
+          isFooterBlurred
           className={`max-w-[${MAP_WIDTH}px] w-full max-h-dvh mb-8 relative overflow-hidden`}
         >
           <GoogleMap
@@ -183,26 +197,28 @@ export default function Home() {
             userLocation={userLocation}
             onLocationChange={handleLocationChange}
           />
-          <CardFooter className="flex justify-center gap-4 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] ml-1 z-10">
-            <Button
-              aria-label="Refresh"
-              className="w-full sm:w-auto"
-              color="primary"
-              startContent={<FaSyncAlt />}
-              onPress={refresh}
-            >
-              Refresh
-            </Button>
-            <Button
-              aria-label="Report Inspector"
-              className="w-full sm:w-auto"
-              color="danger"
-              startContent={<FaExclamationCircle />}
-              onPress={handleReportInspector}
-            >
-              Report
-            </Button>
-          </CardFooter>
+            <CardFooter className="flex justify-center gap-4 overflow-hidden py-3 absolute bottom-1 left-1/2 transform -translate-x-1/2 before:rounded-xl rounded-large w-[calc(100%-8px)] lg:w-auto z-10">
+              <Button
+                aria-label="Refresh"
+                className="w-full sm:w-auto text-lg"
+                color="primary"
+                variant="flat"
+                startContent={<FaSyncAlt />}
+                onPress={refresh}
+              >
+                Refresh
+              </Button>
+              <Button
+                aria-label="Report Inspector"
+                className="w-full sm:w-auto text-lg"
+                color="danger"
+                variant="bordered"
+                startContent={<FaExclamationCircle />}
+                onPress={handleReportInspector}
+              >
+                Report
+              </Button>
+            </CardFooter>
         </Card>
       </div>
       <PushNotificationManager />
