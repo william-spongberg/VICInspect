@@ -15,7 +15,6 @@ import {
 } from "@/lib/supabase";
 import { DRAGGED_ACCURACY } from "@/components/marker";
 import GoogleMap, { MAP_WIDTH } from "@/components/map";
-import PushNotificationManager from "@/components/push";
 
 const TOAST_TIMEOUT = 3000;
 const LOCATION_TIMEOUT = 25000;
@@ -222,7 +221,6 @@ export default function Home() {
           </CardFooter>
         </Card>
       </div>
-      <PushNotificationManager />
     </>
   );
 }

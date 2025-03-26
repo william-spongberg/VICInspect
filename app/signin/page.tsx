@@ -4,10 +4,11 @@ import type { Provider } from "@supabase/auth-js";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Button } from "@heroui/button";
+import { Button, Card, CardBody, CardHeader, CardFooter, Divider } from "@heroui/react";
 
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/auth-context";
+import { title, subtitle } from "@/components/primitives";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -18,9 +19,9 @@ export default function SignInPage() {
   // Redirect if user is already logged in
   if (user) {
     router.push("/dashboard");
-
     return null;
   }
+  
   const handleSignIn = async (platform: Provider) => {
     try {
       setIsLoading(true);
@@ -49,22 +50,25 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4">
-      <div className="w-full max-w-md p-8 space-y-8  rounded-lg shadow-md">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold">Sign In</h1>
-          <p className="mt-2 ">Sign in or create a new account</p>
-        </div>
+    <div className="flex flex-col items-center justify-center min-h-[70vh] p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="flex flex-col gap-1 items-center">
+          <h1 className={title({ color: "blue" })}>Sign In</h1>
+          <p className={subtitle()}>Sign in or create a new account to use all features</p>
+        </CardHeader>
+        <Divider />
+        <CardBody>
+          {error && (
+            <div className="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-md">
+              {error}
+            </div>
+          )}
 
-        {error && (
-          <div className="p-4 text-sm text-red-700 bg-red-100 rounded-md">
-            {error}
-          </div>
-        )}
-
-        <div className="space-y-4">
           <Button
-            className="w-full flex items-center justify-center gap-2"
+            className="w-full flex items-center justify-center gap-2 py-6"
+            size="lg"
+            color="default"
+            variant="bordered"
             disabled={isLoading}
             onPress={handleGitHubSignIn}
           >
@@ -86,8 +90,8 @@ export default function SignInPage() {
               </>
             )}
           </Button>
-        </div>
-      </div>
+        </CardBody>
+      </Card>
     </div>
   );
 }

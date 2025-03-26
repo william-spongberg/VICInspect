@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Button, Input } from "@heroui/react";
+import { Button, Input, Card, CardHeader, CardBody, CardFooter, Divider } from "@heroui/react";
+import { FaBell, FaBellSlash } from "react-icons/fa";
 
 import {
   subscribeUser,
@@ -60,45 +61,69 @@ export default function PushNotificationManager() {
   }
 
   if (!isSupported) {
-    return <p>Push notifications are not supported in this browser.</p>;
+    return (
+      <Card className="mt-8">
+        <CardBody>
+          <p className="text-default-500">Push notifications are not supported in this browser.</p>
+        </CardBody>
+      </Card>
+    );
   }
 
   return (
-    <div className="p-4 pt-8 rounded shadow-md">
-      <h3 className="text-xl font-semibold mt-4 mb-4">Push Notifications</h3>
-      {subscription ? (
-        <>
-          <p className="mb-2 text-gray-700">
-            You are subscribed to push notifications.
+    <Card className="mt-8">
+      <CardHeader className="flex gap-3">
+        <div className="flex flex-col">
+          <h3 className="text-xl font-semibold">Push Notifications</h3>
+          <p className="text-default-500">
+            {subscription ? "You will be notified when inspectors are reported nearby" : "Subscribe to get alerts when inspectors are reported nearby"}
           </p>
-
-          <div className="flex gap-2 mb-4 max-w-lg">
-            <Input
-              placeholder="Enter notification message"
-              type="text"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-            />
-            <Button color="success" onPress={sendTestNotification}>
-              Send Test
-            </Button>
+        </div>
+      </CardHeader>
+      <Divider />
+      <CardBody>
+        {subscription ? (
+          <>
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-row gap-2 items-center mb-2">
+                <FaBell className="text-success" />
+                <p className="text-success">You are subscribed to push notifications.</p>
+              </div>
+              
+              <div className="flex gap-2 mb-4 max-w-lg flex-col sm:flex-row">
+                <Input
+                  placeholder="Enter notification message"
+                  type="text"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                />
+                <Button color="success" onPress={sendTestNotification} size="lg">
+                  Send Test
+                </Button>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-row gap-2 items-center mb-2">
+              <FaBellSlash className="text-default-500" />
+              <p className="text-default-500">You are not receiving notifications.</p>
+            </div>
           </div>
-
-          <Button className="mb-2" color="danger" onPress={unsubscribeFromPush}>
+        )}
+      </CardBody>
+      <CardFooter>
+        {subscription ? (
+          <Button color="danger" variant="bordered" onPress={unsubscribeFromPush}>
             Unsubscribe
           </Button>
-        </>
-      ) : (
-        <>
-          <p className="mb-2 text-gray-700">
-            You are not subscribed to push notifications.
-          </p>
+        ) : (
           <Button color="primary" onPress={subscribeToPush}>
             Subscribe
           </Button>
-        </>
-      )}
-    </div>
+        )}
+      </CardFooter>
+    </Card>
   );
 }
 
