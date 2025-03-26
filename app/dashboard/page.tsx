@@ -62,12 +62,17 @@ export default function Dashboard() {
               <strong>Provider:</strong>{" "}
               {user.app_metadata.provider ?? "Unknown"}
             </p>
+            
           </div>
         </CardBody>
         <CardFooter>
+          
           <Button color="danger" variant="bordered" onPress={signOut}>
             Sign Out
           </Button>
+          <small className="p-4">
+            Last signed in: {user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString() : "No sign-in time available"}
+          </small>
         </CardFooter>
       </Card>
 
