@@ -13,6 +13,7 @@ import {
 } from "@heroui/react";
 
 import { useAuth } from "../../context/auth-context";
+
 import PushNotificationManager from "@/components/push";
 
 export default function Dashboard() {
@@ -42,7 +43,7 @@ export default function Dashboard() {
 
       <Card className="mb-6">
         <CardHeader className="flex items-center gap-4">
-          <Avatar name={userInitial} size="lg" color="primary" />
+          <Avatar color="primary" name={userInitial} size="lg" />
           <div>
             <h2 className="text-xl font-semibold">Welcome, {userName}</h2>
             <p className="text-default-500">Account Information</p>

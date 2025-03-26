@@ -4,10 +4,11 @@ import type { Provider } from "@supabase/auth-js";
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Button, Card, CardBody, CardHeader, CardFooter, Divider } from "@heroui/react";
+import { Button, Card, CardBody, CardHeader, Divider } from "@heroui/react";
 
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../context/auth-context";
+
 import { title, subtitle } from "@/components/primitives";
 
 export default function SignInPage() {
@@ -19,9 +20,10 @@ export default function SignInPage() {
   // Redirect if user is already logged in
   if (user) {
     router.push("/dashboard");
+
     return null;
   }
-  
+
   const handleSignIn = async (platform: Provider) => {
     try {
       setIsLoading(true);
@@ -54,7 +56,9 @@ export default function SignInPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="flex flex-col gap-1 items-center">
           <h1 className={title({ color: "blue" })}>Sign In</h1>
-          <p className={subtitle()}>Sign in or create a new account to use all features</p>
+          <p className={subtitle()}>
+            Sign in or create a new account to use all features
+          </p>
         </CardHeader>
         <Divider />
         <CardBody>
@@ -66,10 +70,10 @@ export default function SignInPage() {
 
           <Button
             className="w-full flex items-center justify-center gap-2 py-6"
-            size="lg"
             color="default"
-            variant="bordered"
             disabled={isLoading}
+            size="lg"
+            variant="bordered"
             onPress={handleGitHubSignIn}
           >
             {isLoading ? (

@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
-import { Button, Input, Card, CardHeader, CardBody, CardFooter, Divider } from "@heroui/react";
+import {
+  Button,
+  Input,
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Divider,
+} from "@heroui/react";
 import { FaBell, FaBellSlash } from "react-icons/fa";
 
 import {
@@ -64,7 +72,9 @@ export default function PushNotificationManager() {
     return (
       <Card className="mt-8">
         <CardBody>
-          <p className="text-default-500">Push notifications are not supported in this browser.</p>
+          <p className="text-default-500">
+            Push notifications are not supported in this browser.
+          </p>
         </CardBody>
       </Card>
     );
@@ -76,7 +86,9 @@ export default function PushNotificationManager() {
         <div className="flex flex-col">
           <h3 className="text-xl font-semibold">Push Notifications</h3>
           <p className="text-default-500">
-            {subscription ? "You will be notified when inspectors are reported nearby" : "Subscribe to get alerts when inspectors are reported nearby"}
+            {subscription
+              ? "You will be notified when inspectors are reported nearby"
+              : "Subscribe to get alerts when inspectors are reported nearby"}
           </p>
         </div>
       </CardHeader>
@@ -87,9 +99,11 @@ export default function PushNotificationManager() {
             <div className="flex flex-col gap-3">
               <div className="flex flex-row gap-2 items-center mb-2">
                 <FaBell className="text-success" />
-                <p className="text-success">You are subscribed to push notifications.</p>
+                <p className="text-success">
+                  You are subscribed to push notifications.
+                </p>
               </div>
-              
+
               <div className="flex gap-2 mb-4 max-w-lg flex-col sm:flex-row">
                 <Input
                   placeholder="Enter notification message"
@@ -97,7 +111,11 @@ export default function PushNotificationManager() {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                 />
-                <Button color="success" onPress={sendTestNotification} size="lg">
+                <Button
+                  color="success"
+                  size="lg"
+                  onPress={sendTestNotification}
+                >
                   Send Test
                 </Button>
               </div>
@@ -107,14 +125,20 @@ export default function PushNotificationManager() {
           <div className="flex flex-col gap-3">
             <div className="flex flex-row gap-2 items-center mb-2">
               <FaBellSlash className="text-default-500" />
-              <p className="text-default-500">You are not receiving notifications.</p>
+              <p className="text-default-500">
+                You are not receiving notifications.
+              </p>
             </div>
           </div>
         )}
       </CardBody>
       <CardFooter>
         {subscription ? (
-          <Button color="danger" variant="bordered" onPress={unsubscribeFromPush}>
+          <Button
+            color="danger"
+            variant="bordered"
+            onPress={unsubscribeFromPush}
+          >
             Unsubscribe
           </Button>
         ) : (

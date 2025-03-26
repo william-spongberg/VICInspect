@@ -2,15 +2,14 @@ import { createClient } from "@supabase/supabase-js";
 
 export type InspectorReport = {
   id: number;
+  user_id: string;
   latitude: number;
   longitude: number;
-  accuracy?: number;
   votes: number;
   created_at: string;
 };
 
 const DB_REPORTS_TABLE = "inspector_reports";
-const DB_VOTES_TABLE = "report_votes";
 const RECENT_REPORTS_HOURS = 8;
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
@@ -55,16 +54,23 @@ export async function reportInspector(
 
     // update existing report if found and upvote
     if (similarReport) {
-      const { error } = await supabase
-        .from(DB_VOTES_TABLE)
-        .insert({ report_id: similarReport.id });
+      const session = await getSession();
 
-      if (error) throw error;
+      if (session?.user?.id === similarReport.user_id) {
+        const { error } = await supabase
+          .from("inspector_sightings")
+          .update({
+            created_at: new Date().toISOString(),
+            votes: similarReport.votes + 1,
+          })
+          .eq("id", similarReport.id);
+
+        if (error) throw error;
+      }
     } else {
       const { error } = await supabase.from(DB_REPORTS_TABLE).insert({
         latitude: location.lat,
         longitude: location.lng,
-        accuracy: accuracy ?? 0,
       });
 
       if (error) throw error;
@@ -100,23 +106,5 @@ export async function getRecentReports(
     console.error("Error fetching recent reports:", error);
 
     return [];
-  }
-}
-
-// get all votes that match report id
-export async function getReportVotes(reportId: number): Promise<number> {
-  try {
-    const { data, error } = await supabase
-      .from(DB_VOTES_TABLE)
-      .select("report_id", { count: "exact" })
-      .eq("report_id", reportId);
-
-    if (error) throw error;
-
-    return data?.length ?? 0;
-  } catch (error) {
-    console.error("Error fetching report votes:", error);
-
-    return 0;
   }
 }
