@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
+import { Button, Input } from "@heroui/react";
+
 import {
   subscribeUser,
   unsubscribeUser,
   sendNotification,
 } from "@/app/actions";
-import { Button, Input } from "@heroui/react";
 
 export default function PushNotificationManager() {
   const [isSupported, setIsSupported] = useState(false);
   const [subscription, setSubscription] = useState<PushSubscription | null>(
-    null
+    null,
   );
   const [message, setMessage] = useState("");
 
@@ -35,7 +36,7 @@ export default function PushNotificationManager() {
     const sub = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(
-        process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
+        process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
       ),
     });
 
@@ -70,7 +71,7 @@ export default function PushNotificationManager() {
           <p className="mb-2 text-gray-700">
             You are subscribed to push notifications.
           </p>
-          
+
           <div className="flex gap-2 mb-4 max-w-lg">
             <Input
               placeholder="Enter notification message"
