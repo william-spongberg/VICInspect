@@ -5,7 +5,9 @@ import { title, subtitle } from "@/components/primitives";
 export default function PrivacyPage() {
   return (
     <div className="container mx-auto px-6 py-8 max-w-4xl m-8">
-      <h1 className={title({ size: "lg", color: "blue" })}>Privacy Policy</h1>
+      <div className="flex justify-center">
+        <h1 className={title({ size: "lg", color: "blue" })}>Privacy Policy</h1>
+      </div>
 
       <p className={subtitle({})}>
         PTV Inspector Tracker is committed to providing quality services to you,
@@ -48,7 +50,7 @@ export default function PrivacyPage() {
 
       <ul className="list-disc pl-10 my-4">
         <li className="text-default-600 mb-2">
-          When you sign up or log in using Facebook authentication.
+          When you sign up or log in using Facebook or GitHub authentication.
         </li>
         <li className="text-default-600 mb-2">
           When you voluntarily submit information about PTV inspector locations.

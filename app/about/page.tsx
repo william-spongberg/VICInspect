@@ -8,7 +8,7 @@ import { title, subtitle } from "@/components/primitives";
 
 export default function AboutPage() {
   return (
-    <div className="container mx-auto px-6 py-8 max-w-4xl">
+    <div className="container mx-auto px-6 py-8 max-w-4xl m-8">
       <h1 className={title({ size: "lg", color: "yellow" })}>
         PTV Inspector Tracker
       </h1>
@@ -17,14 +17,13 @@ export default function AboutPage() {
         Due to concerns about how PTV inspectors have been treating passengers,
         this website serves as a platform for reporting the precise locations of
         these inspectors at all times and allow users to readjust their trips
-        accordingly. It offers real-time heatmaps, enables you to submit reports
-        on inspector activities and view reports submitted by others.
+        accordingly.
       </p>
 
       <div className="my-6 p-4 bg-amber-100 dark:bg-amber-900/30 border-l-4 border-amber-500 rounded mb-16">
         <p className="text-amber-800 dark:text-amber-200">
           <strong>NOTE:</strong> Currently a work in progress! You can help out
-          by starring this on GitHub, or by sharing this website around.
+          by sharing this website online or starring the project on GitHub.
         </p>
       </div>
 
