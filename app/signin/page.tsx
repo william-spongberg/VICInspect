@@ -6,9 +6,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button, Card, CardBody, CardHeader, Divider } from "@heroui/react";
 
-import { supabase } from "../../lib/supabase";
-import { useAuth } from "../../context/auth-context";
-
+import { supabase } from "@/supabase/client";
+import { useAuth } from "@/context/auth-context";
 import { title, subtitle } from "@/components/primitives";
 
 export default function SignInPage() {

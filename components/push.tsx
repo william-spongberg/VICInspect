@@ -10,60 +10,149 @@ import {
 } from "@heroui/react";
 import { FaBell, FaBellSlash } from "react-icons/fa";
 
+import { sendNotification } from "@/app/actions";
+import { useAuth } from "@/context/auth-context";
 import {
   subscribeUser,
   unsubscribeUser,
-  sendNotification,
-} from "@/app/actions";
+  DbSubscription,
+  getDeviceId,
+} from "@/supabase/subscriptions";
 
 export default function PushNotificationManager() {
   const [isSupported, setIsSupported] = useState(false);
   const [subscription, setSubscription] = useState<PushSubscription | null>(
     null,
   );
+  const [dbSubscription, setDbSubscription] = useState<DbSubscription | null>(
+    null,
+  );
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [deviceId, setDeviceId] = useState<string>("");
+  const { user } = useAuth();
 
   useEffect(() => {
-    if ("serviceWorker" in navigator && "PushManager" in window) {
+    if ("serviceWorker" in navigator && "PushManager" in window && user) {
       setIsSupported(true);
+      const id = getDeviceId();
+
+      setDeviceId(id);
       registerServiceWorker();
     }
-  }, []);
+  }, [user]);
+
+  function convertSubscription(sub: PushSubscription | null) {
+    setSubscription(sub);
+    if (!sub) return null;
+    if (!user) {
+      setErrorMessage("User not authenticated. Please log in again.");
+
+      return null;
+    }
+
+    const dbSub = {
+      user_id: user.id,
+      device_id: deviceId,
+      endpoint: sub.endpoint,
+      keys: {
+        p256dh: Buffer.from(sub.getKey("p256dh") as ArrayBuffer).toString(
+          "base64",
+        ),
+        auth: Buffer.from(sub.getKey("auth") as ArrayBuffer).toString("base64"),
+      },
+    } as DbSubscription;
+
+    setDbSubscription(dbSub);
+
+    return dbSub;
+  }
 
   async function registerServiceWorker() {
-    const registration = await navigator.serviceWorker.register("/sw.js", {
-      scope: "/",
-      updateViaCache: "none",
-    });
-    const sub = await registration.pushManager.getSubscription();
+    try {
+      const registration = await navigator.serviceWorker.register("/sw.js", {
+        scope: "/",
+        updateViaCache: "none",
+      });
+      const sub = await registration.pushManager.getSubscription();
 
-    setSubscription(sub);
+      convertSubscription(sub);
+    } catch (error) {
+      setErrorMessage("Failed to register service worker");
+    }
   }
 
+  // subscribe to push notifications if logged in
   async function subscribeToPush() {
-    const registration = await navigator.serviceWorker.ready;
-    const sub = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(
-        process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-      ),
-    });
+    if (!user) {
+      setErrorMessage("Cannot subscribe without being logged in");
 
-    setSubscription(sub);
-    const serializedSub = JSON.parse(JSON.stringify(sub));
+      return;
+    }
 
-    await subscribeUser(serializedSub);
+    setIsLoading(true);
+    setErrorMessage(null);
+
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      const sub = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(
+          process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
+        ),
+      });
+
+      const dbSub = convertSubscription(sub);
+
+      if (dbSub) {
+        const result = await subscribeUser(dbSub);
+
+        if (!result.success) {
+          throw new Error(result.error ?? "Failed to subscribe");
+        }
+      } else {
+        throw new Error("Failed to create subscription data");
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Subscription failed";
+
+      setErrorMessage(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
+  // unsubscribe from push notifications if device ID is available
   async function unsubscribeFromPush() {
-    await subscription?.unsubscribe();
-    setSubscription(null);
-    await unsubscribeUser();
+    setIsLoading(true);
+    try {
+      if (deviceId) {
+        const result = await unsubscribeUser(deviceId);
+
+        if (result.success) {
+          if (subscription) {
+            await subscription.unsubscribe();
+            setSubscription(null);
+          }
+        } else {
+          throw new Error(result.error ?? "Failed to unsubscribe");
+        }
+      }
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "Unsubscribe failed",
+      );
+    } finally {
+      setIsLoading(false);
+    }
   }
 
+  // send a test notification
   async function sendTestNotification() {
-    if (subscription) {
-      await sendNotification(message);
+    if (subscription && user) {
+      await sendNotification(message, dbSubscription!);
       setMessage("");
     }
   }
@@ -94,6 +183,13 @@ export default function PushNotificationManager() {
       </CardHeader>
       <Divider />
       <CardBody>
+        {errorMessage && (
+          <div className="mb-4 p-3 bg-danger-50 text-danger border border-danger-200 rounded-md">
+            <p className="font-semibold">Error:</p>
+            <p>{errorMessage}</p>
+          </div>
+        )}
+
         {subscription ? (
           <>
             <div className="flex flex-col gap-3">
@@ -136,13 +232,19 @@ export default function PushNotificationManager() {
         {subscription ? (
           <Button
             color="danger"
+            isLoading={isLoading}
             variant="bordered"
             onPress={unsubscribeFromPush}
           >
             Unsubscribe
           </Button>
         ) : (
-          <Button color="primary" onPress={subscribeToPush}>
+          <Button
+            color="primary"
+            isDisabled={!user}
+            isLoading={isLoading}
+            onPress={subscribeToPush}
+          >
             Subscribe
           </Button>
         )}

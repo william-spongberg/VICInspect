@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { supabase, getSession } from "./client";
 
 export type InspectorReport = {
   id: number;
@@ -11,30 +11,6 @@ export type InspectorReport = {
 
 const DB_REPORTS_TABLE = "inspector_reports";
 const RECENT_REPORTS_HOURS = 8;
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
-
-// create a supabase client
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true,
-  },
-});
-
-// get the current session
-export const getSession = async () => {
-  const { data, error } = await supabase.auth.getSession();
-
-  if (error) {
-    console.error("Error getting session:", error);
-
-    return null;
-  }
-
-  return data.session;
-};
 
 // save current location as an inspector report
 export async function reportInspector(

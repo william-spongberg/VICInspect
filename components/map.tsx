@@ -11,7 +11,7 @@ import { Skeleton } from "@heroui/react";
 import Marker from "./marker";
 import HeatMap from "./heatmap";
 
-import { InspectorReport } from "@/lib/supabase";
+import { InspectorReport } from "@/supabase/reports";
 
 export const MAP_ID = "DEMO_MAP_ID";
 export const MAP_WIDTH = 1000;

@@ -12,7 +12,7 @@ import {
   reportInspector,
   getRecentReports,
   InspectorReport,
-} from "@/lib/supabase";
+} from "@/supabase/reports";
 import { DRAGGED_ACCURACY } from "@/components/marker";
 import GoogleMap, { MAP_WIDTH } from "@/components/map";
 
@@ -55,14 +55,14 @@ export default function Home() {
     if (navigator.geolocation) {
       // set a timeout for location retrieval
       timeoutId = setTimeout(() => {
-        console.log("Location timeout reached, using Melbourne CBD as default");
         addToast({
-          title: "Location unavailable",
+          title: "Location timed out",
           description: "Using Melbourne CBD location",
           color: "warning",
           icon: <FaLocationArrow size={20} />,
           timeout: TOAST_TIMEOUT,
         });
+        setUserLocation(MELBOURNE_CBD);
       }, LOCATION_TIMEOUT);
 
       navigator.geolocation.getCurrentPosition(
@@ -80,12 +80,13 @@ export default function Home() {
     } else {
       console.error("Geolocation is not supported by this browser.");
       addToast({
-        title: "Location error",
+        title: "Location unavailable",
         description: "Using Melbourne CBD location",
         color: "warning",
         icon: <FaLocationArrow size={20} />,
         timeout: TOAST_TIMEOUT,
       });
+      setUserLocation(MELBOURNE_CBD);
     }
 
     // yay grabbed it, set locations
@@ -101,7 +102,6 @@ export default function Home() {
     // report error if any
     function error(e: any) {
       console.error("Error in getting user location: ", e);
-      // toast error if first time getting location
       addToast({
         title: "Location error",
         description: "Using Melbourne CBD location",
