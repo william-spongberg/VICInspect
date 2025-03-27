@@ -86,7 +86,6 @@ export default function Home() {
         icon: <FaLocationArrow size={20} />,
         timeout: TOAST_TIMEOUT,
       });
-      setUserLocation(MELBOURNE_CBD);
     }
 
     // yay grabbed it, set locations
@@ -109,7 +108,6 @@ export default function Home() {
         icon: <FaLocationArrow size={20} />,
         timeout: TOAST_TIMEOUT,
       });
-      setUserLocation(MELBOURNE_CBD);
     }
   }
 
