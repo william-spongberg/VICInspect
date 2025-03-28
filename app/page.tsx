@@ -13,7 +13,6 @@ import {
   getRecentReports,
   InspectorReport,
 } from "@/supabase/reports";
-import { DRAGGED_ACCURACY } from "@/components/marker";
 import GoogleMap, { MAP_WIDTH } from "@/components/map";
 
 const TOAST_TIMEOUT = 3000;
@@ -25,13 +24,12 @@ const MELBOURNE_CBD = {
 
 export default function Home() {
   const [geoLocation, setGeoLocation] = useState<GeolocationPosition | null>(
-    null,
+    null
   );
   const [userLocation, setUserLocation] =
     useState<google.maps.LatLngLiteral>(MELBOURNE_CBD);
-  const [dragged, setDragged] = useState(false);
   const [inspectorReports, setInspectorReports] = useState<InspectorReport[]>(
-    [],
+    []
   );
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isReporting, setIsReporting] = useState(false);
@@ -75,7 +73,7 @@ export default function Home() {
           // boo error
           clearTimeout(timeoutId);
           error(e);
-        },
+        }
       );
     } else {
       console.error("Geolocation is not supported by this browser.");
@@ -122,8 +120,6 @@ export default function Home() {
   // update location for new lat lng
   const handleLocationChange = (newLocation: google.maps.LatLngLiteral) => {
     setUserLocation(newLocation);
-    setDragged(true);
-    console.log("Location updated to:", newLocation);
   };
 
   // use const since using async
@@ -171,8 +167,7 @@ export default function Home() {
     const success = await reportInspector(
       errorCallback,
       userLocation,
-      dragged ? DRAGGED_ACCURACY : geoLocation?.coords.accuracy,
-      inspectorReports,
+      inspectorReports
     );
 
     // if successfully, send toast and refresh reports

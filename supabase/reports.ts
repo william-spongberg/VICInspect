@@ -16,12 +16,11 @@ const RECENT_REPORTS_HOURS = 8;
 export async function reportInspector(
   errorCallback: (error: any) => void,
   location: google.maps.LatLngLiteral,
-  accuracy?: number,
-  inspectorReports?: InspectorReport[],
+  inspectorReports: InspectorReport[],
 ): Promise<boolean> {
   try {
     // find if very similar location (within 50m) has already been reported
-    const similarReport = inspectorReports?.find((report) => {
+    const similarReport = inspectorReports.find((report) => {
       const latDiff = Math.abs(report.latitude - location.lat);
       const lngDiff = Math.abs(report.longitude - location.lng);
 
