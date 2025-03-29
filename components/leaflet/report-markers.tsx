@@ -1,6 +1,6 @@
 import { Marker, Popup } from "react-leaflet";
 
-import { markerIcon } from "./map";
+import { reportIcon } from "./map";
 
 import { InspectorReport } from "@/supabase/reports";
 
@@ -32,7 +32,7 @@ export default function ReportMarkers({
     return (
       <Marker
         key={report.id}
-        icon={markerIcon}
+        icon={reportIcon}
         opacity={0}
         position={[report.latitude, report.longitude]}
       >
