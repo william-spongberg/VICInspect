@@ -1,23 +1,18 @@
 import { useEffect, useState } from "react";
-import {
-  Button,
-  Input,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Divider,
-} from "@heroui/react";
+import { Button, addToast } from "@heroui/react";
 import { FaBell, FaBellSlash } from "react-icons/fa";
 
 import { sendNotification } from "@/app/actions";
 import { useAuth } from "@/context/auth-context";
+import { subtitle } from "@/components/primitives";
 import {
   subscribeUser,
   unsubscribeUser,
   DbSubscription,
   getDeviceId,
 } from "@/supabase/subscriptions";
+
+const message = "Test notification!";
 
 export default function PushNotificationManager() {
   const [isSupported, setIsSupported] = useState(false);
@@ -27,9 +22,7 @@ export default function PushNotificationManager() {
   const [dbSubscription, setDbSubscription] = useState<DbSubscription | null>(
     null,
   );
-  const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [deviceId, setDeviceId] = useState<string>("");
   const { user } = useAuth();
 
@@ -47,7 +40,7 @@ export default function PushNotificationManager() {
     setSubscription(sub);
     if (!sub) return null;
     if (!user) {
-      setErrorMessage("User not authenticated. Please log in again.");
+      showErrorToast("Error", "User not authenticated. Please log in again.");
 
       return null;
     }
@@ -79,20 +72,19 @@ export default function PushNotificationManager() {
 
       convertSubscription(sub);
     } catch (error) {
-      setErrorMessage("Failed to register service worker");
+      showErrorToast("Error", "Failed to register service worker");
     }
   }
 
   // subscribe to push notifications if logged in
   async function subscribeToPush() {
     if (!user) {
-      setErrorMessage("Cannot subscribe without being logged in");
+      showErrorToast("Error", "Cannot subscribe without being logged in");
 
       return;
     }
 
     setIsLoading(true);
-    setErrorMessage(null);
 
     try {
       const registration = await navigator.serviceWorker.ready;
@@ -118,7 +110,7 @@ export default function PushNotificationManager() {
       const errorMessage =
         error instanceof Error ? error.message : "Subscription failed";
 
-      setErrorMessage(errorMessage);
+      showErrorToast("Subscribe Error", errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -141,9 +133,10 @@ export default function PushNotificationManager() {
         }
       }
     } catch (error) {
-      setErrorMessage(
-        error instanceof Error ? error.message : "Unsubscribe failed",
-      );
+      const errorMessage =
+        error instanceof Error ? error.message : "Unsubscription failed";
+
+      showErrorToast("Unsubscribe Error", errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -153,104 +146,77 @@ export default function PushNotificationManager() {
   async function sendTestNotification() {
     if (subscription && user) {
       await sendNotification(message, dbSubscription!);
-      setMessage("");
     }
   }
 
   if (!isSupported) {
     return (
-      <Card className="mt-8">
-        <CardBody>
-          <p className="text-default-500">
-            Push notifications are not supported in this browser.
-          </p>
-        </CardBody>
-      </Card>
+      <div className="bg-default-50 p-4 rounded-medium border border-default-200 shadow-sm">
+        <p className={subtitle({ fullWidth: true, class: "!my-0 !text-sm" })}>
+          Push notifications are not supported in this browser.
+        </p>
+      </div>
     );
   }
 
   return (
-    <Card className="mt-8">
-      <CardHeader className="flex gap-3">
-        <div className="flex flex-col">
-          <h3 className="text-xl font-semibold">Push Notifications</h3>
-          <p className="text-default-500">
-            {subscription
-              ? "You will be notified when inspectors are reported nearby"
-              : "Subscribe to get alerts when inspectors are reported nearby"}
-          </p>
+    <>
+      {subscription ? (
+        <div className="p-3 bg-default-50 rounded-medium">
+          <div className="flex flex-col items-start gap-2 mb-2">
+            <div className="flex flex-row items-center gap-2">
+              <Button
+                className="mt-2 w-full sm:w-auto"
+                color="primary"
+                size="md"
+                onPress={sendTestNotification}
+              >
+                Send Test Notification
+              </Button>
+              <Button
+                className="mt-2 w-full sm:w-auto"
+                color="danger"
+                isLoading={isLoading}
+                size="md"
+                startContent={!isLoading && <FaBellSlash />}
+                variant="ghost"
+                onPress={unsubscribeFromPush}
+              >
+                Unsubscribe
+              </Button>
+            </div>
+          </div>
         </div>
-      </CardHeader>
-      <Divider />
-      <CardBody>
-        {errorMessage && (
-          <div className="mb-4 p-3 bg-danger-50 text-danger border border-danger-200 rounded-md">
-            <p className="font-semibold">Error:</p>
-            <p>{errorMessage}</p>
+      ) : (
+        <div className="p-3 bg-default-50 rounded-medium">
+          <div className="flex flex-col items-start gap-2 mb-2">
+            <Button
+              color="primary"
+              isDisabled={!user}
+              isLoading={isLoading}
+              size="md"
+              startContent={!isLoading && <FaBell />}
+              onPress={subscribeToPush}
+            >
+              Subscribe to Notifications
+            </Button>
           </div>
-        )}
-
-        {subscription ? (
-          <>
-            <div className="flex flex-col gap-3">
-              <div className="flex flex-row gap-2 items-center mb-2">
-                <FaBell className="text-success" />
-                <p className="text-success">
-                  You are subscribed to push notifications.
-                </p>
-              </div>
-
-              <div className="flex gap-2 mb-4 max-w-lg flex-col sm:flex-row">
-                <Input
-                  placeholder="Enter notification message"
-                  type="text"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                />
-                <Button
-                  color="success"
-                  size="lg"
-                  onPress={sendTestNotification}
-                >
-                  Send Test
-                </Button>
-              </div>
-            </div>
-          </>
-        ) : (
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-row gap-2 items-center mb-2">
-              <FaBellSlash className="text-default-500" />
-              <p className="text-default-500">
-                You are not receiving notifications.
-              </p>
-            </div>
-          </div>
-        )}
-      </CardBody>
-      <CardFooter>
-        {subscription ? (
-          <Button
-            color="danger"
-            isLoading={isLoading}
-            variant="bordered"
-            onPress={unsubscribeFromPush}
-          >
-            Unsubscribe
-          </Button>
-        ) : (
-          <Button
-            color="primary"
-            isDisabled={!user}
-            isLoading={isLoading}
-            onPress={subscribeToPush}
-          >
-            Subscribe
-          </Button>
-        )}
-      </CardFooter>
-    </Card>
+          {/* <p className={subtitle({ fullWidth: true, class: "!my-0 !text-sm" })}>
+            Subscribe to get alerts when inspectors are reported nearby
+          </p> */}
+        </div>
+      )}
+    </>
   );
+}
+
+function showErrorToast(title: string, message: string) {
+  addToast({
+    title: title,
+    description: message,
+    color: "danger",
+    timeout: 5000,
+  });
 }
 
 function urlBase64ToUint8Array(base64String: string) {

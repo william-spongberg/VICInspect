@@ -159,6 +159,7 @@ export default function Home() {
         title: "Error",
         description: "Failed to report inspector",
         color: "danger",
+        variant: "bordered",
         timeout: TOAST_TIMEOUT,
       });
       setIsReporting(false);

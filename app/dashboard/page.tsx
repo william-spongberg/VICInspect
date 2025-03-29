@@ -7,13 +7,16 @@ import {
   Card,
   CardBody,
   CardHeader,
-  CardFooter,
   Avatar,
   Divider,
+  Chip,
+  Skeleton,
 } from "@heroui/react";
 
 import { useAuth } from "../../context/auth-context";
 
+import { title, subtitle } from "@/components/primitives";
+import { GithubIcon } from "@/components/icons";
 import PushNotificationManager from "@/components/push";
 
 export default function Dashboard() {
@@ -27,57 +30,174 @@ export default function Dashboard() {
     }
   }, [user, isLoading, router]);
 
+  if (!user && !isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[70vh] p-4">
+        <Card className="w-full max-w-md shadow-md">
+          <CardHeader className="flex flex-col gap-2 items-center py-6">
+            <Skeleton className="h-8 w-40 rounded-lg mb-2" />
+          </CardHeader>
+          <Divider />
+          <CardBody>
+            <div className="flex flex-col items-center gap-4">
+              <Skeleton className="h-8 w-40 rounded-lg mb-2" />
+              <Skeleton className="h-10 w-24 rounded-lg" />
+            </div>
+          </CardBody>
+        </Card>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="w-full max-w-5xl mx-auto space-y-6">
+        <Card className="mb-6 shadow-md">
+          <CardHeader className="flex items-center gap-4">
+            <Skeleton className="rounded-full w-14 h-14" />
+            <div className="flex-grow">
+              <Skeleton className="h-8 w-40 rounded-lg mb-2" />
+              <Skeleton className="h-4 w-60 rounded-lg" />
+            </div>
+            <Skeleton className="h-10 w-24 rounded-lg" />
+          </CardHeader>
+
+          <Divider />
+
+          <CardBody>
+            <div className="grid grid-cols-1 gap-6">
+              <div className="space-y-4">
+                <Skeleton className="h-8 w-48 rounded-lg mb-4" />
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="h-6 w-28 rounded-lg" />
+                    <Skeleton className="h-8 w-40 rounded-lg" />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="h-6 w-28 rounded-lg" />
+                    <Skeleton className="h-8 w-64 rounded-lg" />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="h-6 w-28 rounded-lg" />
+                    <Skeleton className="h-8 w-10 rounded-lg" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <Skeleton className="h-8 w-36 rounded-lg mb-4" />
+                <div className="space-y-3">
+                  <Skeleton className="h-12 w-full rounded-lg" />
+                  <Skeleton className="h-10 w-48 rounded-lg" />
+                </div>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+      </div>
+    );
+  }
+
   // if no user, force refresh useEffect
   if (!user) {
     return null;
   }
+  const userName = user.user_metadata.name ?? "User";
+  const provider = user.app_metadata.provider ?? "Unknown";
 
-  const userInitial = (user.user_metadata.name || user.email || "User")
-    .charAt(0)
-    .toUpperCase();
-  const userName = user.user_metadata.name || user.email || "User";
+  function getUserAvatar(): string {
+    switch (provider.toLowerCase()) {
+      case "github":
+        return user?.user_metadata.avatar_url ?? "";
+      default:
+        return "";
+    }
+  }
+
+  function getProviderIcon() {
+    switch (provider.toLowerCase()) {
+      case "github":
+        return <GithubIcon size={25} />;
+      default:
+        return null;
+    }
+  }
 
   return (
     <div className="w-full max-w-5xl mx-auto space-y-6">
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
-
-      <Card className="mb-6">
+      <Card className="mb-6 shadow-md">
         <CardHeader className="flex items-center gap-4">
-          <Avatar color="primary" name={userInitial} size="lg" />
-          <div>
-            <h2 className="text-xl font-semibold">Welcome, {userName}</h2>
-            <p className="text-default-500">Account Information</p>
+          <Avatar color="primary" size="lg" src={getUserAvatar()} />
+          <div className="flex-grow">
+            <h2
+              className={title({
+                color: "blue",
+                size: "sm",
+              })}
+            >
+              {userName}
+            </h2>
+            <p className="text-sm text-default-500">
+              Last login:{" "}
+              <span className="font-medium">
+                {user.last_sign_in_at
+                  ? new Date(user.last_sign_in_at).toLocaleString()
+                  : "No sign-in time available"}
+              </span>
+            </p>
           </div>
-        </CardHeader>
-        <Divider />
-        <CardBody>
-          <div className="space-y-3">
-            <p>
-              <strong>User ID:</strong> {user.id}
-            </p>
-            <p>
-              <strong>Email:</strong> {user.email ?? "No email provided"}
-            </p>
-            <p>
-              <strong>Provider:</strong>{" "}
-              {user.app_metadata.provider ?? "Unknown"}
-            </p>
-          </div>
-        </CardBody>
-        <CardFooter>
-          <Button color="danger" variant="bordered" onPress={signOut}>
+          <Button color="danger" variant="ghost" onPress={signOut}>
             Sign Out
           </Button>
-          <small className="p-4">
-            Last signed in:{" "}
-            {user.last_sign_in_at
-              ? new Date(user.last_sign_in_at).toLocaleString()
-              : "No sign-in time available"}
-          </small>
-        </CardFooter>
-      </Card>
+        </CardHeader>
 
-      <PushNotificationManager />
+        <Divider />
+
+        <CardBody>
+          <div className="grid grid-cols-1 gap-6">
+            <div className="space-y-4">
+              <h3
+                className={subtitle({
+                  fullWidth: true,
+                  class: "!my-3 !text-xl font-semibold",
+                })}
+              >
+                Account Information
+              </h3>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <span className="font-medium text-base w-28">User ID:</span>
+                  <Chip size="lg" variant="flat">
+                    {user.id}
+                  </Chip>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="font-medium text-base w-28">Email:</span>
+                  <Chip color="primary" size="lg" variant="flat">
+                    {user.email ?? "No email provided"}
+                  </Chip>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="font-medium text-base w-28">Provider:</span>
+                  {getProviderIcon()}
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3
+                className={subtitle({
+                  fullWidth: true,
+                  class: "!my-3 !text-xl font-semibold",
+                })}
+              >
+                Notifications
+              </h3>
+              <PushNotificationManager />
+            </div>
+          </div>
+        </CardBody>
+      </Card>
     </div>
   );
 }
