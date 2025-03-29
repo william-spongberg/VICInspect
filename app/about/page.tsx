@@ -38,8 +38,8 @@ export default function AboutPage() {
             </CardHeader>
             <CardBody>
               <p>
-                Employs the Google Maps API for mapping; uses markers and
-                heatmaps to display inspector locations.
+                Employs the Leaflet API and OpenStreetMap for mapping; uses
+                markers and heatmaps to display inspector locations.
               </p>
             </CardBody>
           </Card>
@@ -171,7 +171,7 @@ export default function AboutPage() {
               <h4 className="font-semibold">Facebook Auth</h4>
             </CardHeader>
             <CardBody>
-              <p>Add Facebook and Github authentication using Supabase</p>
+              <p>Add Facebook authentication using Supabase</p>
             </CardBody>
           </Card>
 
@@ -192,19 +192,8 @@ export default function AboutPage() {
             </CardHeader>
             <CardBody>
               <p>
-                Add descriptions for reports or link to Facebook group posts,
-                considering storage costs
-              </p>
-            </CardBody>
-          </Card>
-
-          <Card className="border border-default-200">
-            <CardHeader className="flex gap-3">
-              <h4 className="font-semibold">API Security</h4>
-            </CardHeader>
-            <CardBody>
-              <p>
-                Lock Google Maps API to custom domain and rate limit requests
+                Add descriptions for reports or link to Facebook group posts -
+                need to consider storage costs
               </p>
             </CardBody>
           </Card>
