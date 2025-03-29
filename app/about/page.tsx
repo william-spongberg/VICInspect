@@ -93,9 +93,7 @@ export default function AboutPage() {
       </div>
 
       <div className="pt-14 pb-8">
-        <h3 className={title({ size: "sm", color: "foreground" })}>
-          Tech Stack
-        </h3>
+        <h3 className={title({ size: "sm", color: "green" })}>Tech Stack</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
           <a href="https://nextjs.org" rel="noreferrer" target="_blank">
             <Button
