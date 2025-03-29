@@ -1,19 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button, Card, CardFooter, addToast } from "@heroui/react";
 import {
-  FaExclamationCircle,
-  FaSyncAlt,
   FaLocationArrow,
+  FaSyncAlt,
+  FaExclamationCircle,
 } from "react-icons/fa";
+import { addToast, Card, CardFooter, Button } from "@heroui/react";
 
 import {
   reportInspector,
   getRecentReports,
   InspectorReport,
 } from "@/supabase/reports";
-import GoogleMap, { MAP_WIDTH } from "@/components/map";
+import LeafletMapWrapper from "@/components/leaflet/map-wrapper";
 
 const TOAST_TIMEOUT = 3000;
 const LOCATION_TIMEOUT = 25000;
@@ -24,12 +24,14 @@ const MELBOURNE_CBD = {
 
 export default function Home() {
   const [geoLocation, setGeoLocation] = useState<GeolocationPosition | null>(
-    null
+    null,
   );
-  const [userLocation, setUserLocation] =
-    useState<google.maps.LatLngLiteral>(MELBOURNE_CBD);
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  }>(MELBOURNE_CBD);
   const [inspectorReports, setInspectorReports] = useState<InspectorReport[]>(
-    []
+    [],
   );
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isReporting, setIsReporting] = useState(false);
@@ -73,7 +75,7 @@ export default function Home() {
           // boo error
           clearTimeout(timeoutId);
           error(e);
-        }
+        },
       );
     } else {
       console.error("Geolocation is not supported by this browser.");
@@ -118,9 +120,9 @@ export default function Home() {
   }
 
   // update location for new lat lng
-  const handleLocationChange = (newLocation: google.maps.LatLngLiteral) => {
+  function handleLocationChange(newLocation: { lat: number; lng: number }) {
     setUserLocation(newLocation);
-  };
+  }
 
   // use const since using async
   // report current location as an inspector
@@ -167,7 +169,7 @@ export default function Home() {
     const success = await reportInspector(
       errorCallback,
       userLocation,
-      inspectorReports
+      inspectorReports,
     );
 
     // if successfully, send toast and refresh reports
@@ -190,9 +192,9 @@ export default function Home() {
       <div className="flex justify-center h-full">
         <Card
           isFooterBlurred
-          className={`max-w-[${MAP_WIDTH}px] w-full max-h-dvh mb-8 relative overflow-hidden`}
+          className="max-w-[1000px] w-full max-h-dvh mb-8 relative overflow-hidden"
         >
-          <GoogleMap
+          <LeafletMapWrapper
             geoLocation={geoLocation}
             inspectorReports={inspectorReports}
             userLocation={userLocation}
@@ -205,7 +207,7 @@ export default function Home() {
               color="primary"
               isLoading={isRefreshing}
               startContent={!isRefreshing && <FaSyncAlt />}
-              variant="flat"
+              variant="light"
               onPress={refresh}
             >
               Refresh
