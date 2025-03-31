@@ -31,7 +31,8 @@ export async function reportInspector(
     if (similarReport) {
       const session = await getSession();
 
-      if (session?.user?.id === similarReport.user_id) {
+      // if user is not the one who created the report, upvote it
+      if (session?.user?.id !== similarReport.user_id) {
         const { error } = await supabase
           .from(DB_REPORTS_TABLE)
           .update({
@@ -59,6 +60,7 @@ export async function reportInspector(
   }
 }
 
+// TODO: cache most recent reports in server
 // get recent inspector reports
 export async function getRecentReports(
   hours = RECENT_REPORTS_HOURS,
@@ -84,6 +86,7 @@ export async function getRecentReports(
   }
 }
 
+// TODO: cache this result in server, update if expired after x minutes
 // get number of total reports in last 'x' hours
 export async function getReportCount(hours = 0): Promise<number> {
   try {
