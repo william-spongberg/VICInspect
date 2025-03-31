@@ -26,10 +26,6 @@ export default function Footer() {
             Privacy Policy
           </Link>{" "}
           |{" "}
-          <Link className="text-sm hover:underline" href="/terms">
-            Terms of Service
-          </Link>{" "}
-          |{" "}
           <Link
             className="text-sm hover:underline"
             href="mailto:william@spongberg.dev"
