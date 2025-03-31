@@ -14,6 +14,7 @@ import {
   InspectorReport,
 } from "@/supabase/reports";
 import LeafletMapWrapper from "@/components/leaflet/map-wrapper";
+import { useAuth } from "@/context/auth-context";
 
 const TOAST_TIMEOUT = 3000;
 const LOCATION_TIMEOUT = 25000;
@@ -35,6 +36,7 @@ export default function Home() {
   );
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isReporting, setIsReporting] = useState(false);
+  const { user } = useAuth();
 
   // refresh once on load
   useEffect(() => {
@@ -127,6 +129,12 @@ export default function Home() {
   // use const since using async
   // report current location as an inspector
   const handleReportInspector = async () => {
+    if (!user) {
+      window.location.href = "/signin";
+
+      return;
+    }
+
     setIsReporting(true);
 
     // if location not available, send error toast
