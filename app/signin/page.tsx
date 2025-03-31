@@ -61,7 +61,7 @@ export default function SignInPage() {
           <CardHeader className="flex flex-col gap-2 items-center py-6">
             <h1 className={title({ color: "blue" })}>Sign In</h1>
             <p className={`${subtitle()} text-center`}>
-              Sign in or create a new account to use all features
+              Sign in or create a new account to report inspectors
             </p>
           </CardHeader>
           <Divider />
