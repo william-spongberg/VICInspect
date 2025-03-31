@@ -91,6 +91,7 @@ export default function LeafletMap({
         minZoom={MIN_ZOOM}
         scrollWheelZoom={true}
         zoom={DEFAULT_ZOOM}
+        zoomControl={false}
       >
         <TileLayer attribution={MAP_ATTRIBUTION} url={TILE_LAYER} />
 
