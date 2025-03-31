@@ -64,57 +64,59 @@ export async function reportInspector(
 export async function getReports(
   hours = RECENT_REPORTS_HOURS,
 ): Promise<InspectorReport[]> {
-    // grab all reports from the last 'x' hours
-    const { data, error } = await supabase
-      .from(DB_REPORTS_TABLE)
-      .select("*")
-      .gte(
-        "created_at",
-        new Date(Date.now() - hours * 60 * 60 * 1000).toISOString(),
-      )
-      .order("created_at", { ascending: false });
+  // grab all reports from the last 'x' hours
+  const { data, error } = await supabase
+    .from(DB_REPORTS_TABLE)
+    .select("*")
+    .gte(
+      "created_at",
+      new Date(Date.now() - hours * 60 * 60 * 1000).toISOString(),
+    )
+    .order("created_at", { ascending: false });
 
-    if (error) throw error;
+  if (error) throw error;
 
-    return data || [];
+  return data || [];
 }
 
 // get number of total reports in last 'x' hours
 export async function getReportCount(hours = 0, userId = ""): Promise<number> {
-    let query = supabase.from(DB_REPORTS_TABLE).select("*", { count: "exact" });
+  let query = supabase.from(DB_REPORTS_TABLE).select("*", { count: "exact" });
 
-    // if userId is provided, filter by userId
-    if (userId.length > 0) {
-      query = query.eq("user_id", userId);
-    }
+  // if userId is provided, filter by userId
+  if (userId.length > 0) {
+    query = query.eq("user_id", userId);
+  }
 
-    // if hours is provided, filter by created_at
-    if (hours > 0) {
-      const fromDate = new Date(
-        Date.now() - hours * 60 * 60 * 1000,
-      ).toISOString();
+  // if hours is provided, filter by created_at
+  if (hours > 0) {
+    const fromDate = new Date(
+      Date.now() - hours * 60 * 60 * 1000,
+    ).toISOString();
 
-      query = query.gte("created_at", fromDate);
-    }
+    query = query.gte("created_at", fromDate);
+  }
 
-    const { count, error } = await query;
+  const { count, error } = await query;
 
-    if (error) throw error;
+  if (error) throw error;
 
-    return count ?? 0;
+  return count ?? 0;
 }
 
 // cache recent reports using server
 export async function getRecentReports(): Promise<InspectorReport[]> {
   try {
-    const response = await fetch('/api/reports/recent');
+    const response = await fetch("/api/reports/recent");
+
     if (!response.ok) {
       throw new Error(`Error fetching recent reports: ${response.statusText}`);
     }
+
     return await response.json();
   } catch (error) {
     console.error("Error fetching recent reports from Edge Function:", error);
-    
+
     // fallback to direct call if Edge Function fails
     return getReports();
   }
@@ -123,15 +125,22 @@ export async function getRecentReports(): Promise<InspectorReport[]> {
 // cache total report count using server
 export async function getReportCountTotal(): Promise<number> {
   try {
-    const response = await fetch('/api/reports/count/total');
+    const response = await fetch("/api/reports/count/total");
+
     if (!response.ok) {
-      throw new Error(`Error fetching total report count: ${response.statusText}`);
+      throw new Error(
+        `Error fetching total report count: ${response.statusText}`,
+      );
     }
     const data = await response.json();
+
     return data.count;
   } catch (error) {
-    console.error("Error fetching total report count from Edge Function:", error);
-    
+    console.error(
+      "Error fetching total report count from Edge Function:",
+      error,
+    );
+
     // fallback to direct call if Edge Function fails
     return getReportCount();
   }
@@ -140,15 +149,22 @@ export async function getReportCountTotal(): Promise<number> {
 // cache today's report count using server
 export async function getReportCountToday(): Promise<number> {
   try {
-    const response = await fetch('/api/reports/count/today');
+    const response = await fetch("/api/reports/count/today");
+
     if (!response.ok) {
-      throw new Error(`Error fetching today's report count: ${response.statusText}`);
+      throw new Error(
+        `Error fetching today's report count: ${response.statusText}`,
+      );
     }
     const data = await response.json();
+
     return data.count;
   } catch (error) {
-    console.error("Error fetching today's report count from Edge Function:", error);
-    
+    console.error(
+      "Error fetching today's report count from Edge Function:",
+      error,
+    );
+
     // fallback to direct call if Edge Function fails
     return getReportCount(24);
   }
