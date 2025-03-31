@@ -20,7 +20,7 @@ import { GithubIcon } from "@/components/icons";
 import PushNotificationManager from "@/components/push";
 
 export default function Dashboard() {
-  const { user, signOut, isLoading } = useAuth();
+  const { user, avatar, signOut, isLoading } = useAuth();
   const router = useRouter();
 
   // redirects to signin page if no user
@@ -105,15 +105,6 @@ export default function Dashboard() {
   const userName = user.user_metadata.name ?? "User";
   const provider = user.app_metadata.provider ?? "Unknown";
 
-  function getUserAvatar(): string {
-    switch (provider.toLowerCase()) {
-      case "github":
-        return user?.user_metadata.avatar_url ?? "";
-      default:
-        return "";
-    }
-  }
-
   function getProviderIcon() {
     switch (provider.toLowerCase()) {
       case "github":
@@ -124,14 +115,14 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-6">
+    <div className="w-full max-w-5xl mx-auto space-y-6 pt-20">
       <Card className="mb-6 shadow-md">
         <CardHeader className="flex items-center gap-4">
-          <Avatar color="primary" size="lg" src={getUserAvatar()} />
+          <Avatar color="secondary" size="lg" src={avatar ?? ""} />
           <div className="flex-grow">
             <h2
               className={title({
-                color: "blue",
+                color: "cyan",
                 size: "sm",
               })}
             >
@@ -146,7 +137,7 @@ export default function Dashboard() {
               </span>
             </p>
           </div>
-          <Button color="danger" variant="ghost" onPress={signOut}>
+          <Button color="danger" variant="light" onPress={signOut}>
             Sign Out
           </Button>
         </CardHeader>

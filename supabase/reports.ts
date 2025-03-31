@@ -83,3 +83,37 @@ export async function getRecentReports(
     return [];
   }
 }
+
+// get number of total reports in last 'x' hours
+export async function getReportCount(hours = 0): Promise<number> {
+  try {
+    let query = supabase.from(DB_REPORTS_TABLE).select("*", { count: "exact" });
+
+    if (hours > 0) {
+      const fromDate = new Date(
+        Date.now() - hours * 60 * 60 * 1000,
+      ).toISOString();
+
+      query = query.gte("created_at", fromDate);
+    }
+
+    const { count, error } = await query;
+
+    if (error) throw error;
+
+    return count ?? 0;
+  } catch (error) {
+    console.error("Error fetching report count:", error);
+
+    return 0;
+  }
+}
+
+// get danger level based on number of reports in the last 24 hours
+export function getDangerLevel(reportCount: number): string {
+  if (reportCount <= 5) return "Low";
+  if (reportCount <= 15) return "Medium";
+  if (reportCount <= 30) return "High";
+
+  return "Very High";
+}

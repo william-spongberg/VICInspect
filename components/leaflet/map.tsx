@@ -85,7 +85,7 @@ export default function LeafletMap({
       <MapContainer
         attributionControl={true}
         center={[userLocation.lat, userLocation.lng]}
-        className="w-full h-full z-[1]"
+        className="w-full h-full"
         dragging={true}
         maxZoom={MAX_ZOOM}
         minZoom={MIN_ZOOM}
@@ -101,6 +101,7 @@ export default function LeafletMap({
             dragend: handleMarkerDragEnd,
           }}
           icon={markerIcon}
+          pane="markerPane"
           position={[userLocation.lat, userLocation.lng]}
         >
           <Popup>You</Popup>

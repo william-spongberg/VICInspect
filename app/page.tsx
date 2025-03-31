@@ -1,240 +1,324 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Button, Card, CardBody, CardHeader } from "@heroui/react";
+import { useRouter } from "next/navigation";
 import {
-  FaLocationArrow,
-  FaSyncAlt,
-  FaExclamationCircle,
+  FaMapMarkerAlt,
+  FaUserShield,
+  FaClock,
+  FaBell,
+  FaExclamationTriangle,
+  FaChartBar,
 } from "react-icons/fa";
-import { addToast, Card, CardFooter, Button } from "@heroui/react";
+import { SiLeaflet } from "react-icons/si";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 
-import {
-  reportInspector,
-  getRecentReports,
-  InspectorReport,
-} from "@/supabase/reports";
-import LeafletMapWrapper from "@/components/leaflet/map-wrapper";
+import { title, subtitle } from "@/components/primitives";
 import { useAuth } from "@/context/auth-context";
-
-const TOAST_TIMEOUT = 3000;
-const LOCATION_TIMEOUT = 25000;
-const MELBOURNE_CBD = {
-  lat: -37.8136,
-  lng: 144.9631,
-};
+import { getReportCount, getDangerLevel } from "@/supabase/reports";
 
 export default function Home() {
-  const [geoLocation, setGeoLocation] = useState<GeolocationPosition | null>(
-    null,
-  );
-  const [userLocation, setUserLocation] = useState<{
-    lat: number;
-    lng: number;
-  }>(MELBOURNE_CBD);
-  const [inspectorReports, setInspectorReports] = useState<InspectorReport[]>(
-    [],
-  );
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isReporting, setIsReporting] = useState(false);
+  const router = useRouter();
   const { user } = useAuth();
+  const [todayReports, setTodayReports] = useState<number>(0);
+  const [totalReports, setTotalReports] = useState<number>(0);
+  const [dangerLevel, setDangerLevel] = useState<string>("Loading...");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // refresh once on load
   useEffect(() => {
-    refresh();
-  }, []);
+    const fetchReportStats = async () => {
+      setIsLoading(true);
+      try {
+        const todayCount = await getReportCount(24);
+        const totalCount = await getReportCount();
 
-  // grab recent reports within x hours
-  async function refreshReports() {
-    const reports = await getRecentReports();
-
-    setInspectorReports(reports);
-  }
-
-  // get user location from browser
-  function refreshLocation() {
-    let timeoutId: NodeJS.Timeout;
-
-    if (navigator.geolocation) {
-      // set a timeout for location retrieval
-      timeoutId = setTimeout(() => {
-        addToast({
-          title: "Location timed out",
-          description: "Using Melbourne CBD location",
-          color: "warning",
-          icon: <FaLocationArrow size={20} />,
-          timeout: TOAST_TIMEOUT,
-        });
-        setUserLocation(MELBOURNE_CBD);
-      }, LOCATION_TIMEOUT);
-
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          // yay grabbed it
-          clearTimeout(timeoutId);
-          success(pos);
-        },
-        (e) => {
-          // boo error
-          clearTimeout(timeoutId);
-          error(e);
-        },
-      );
-    } else {
-      console.error("Geolocation is not supported by this browser.");
-      addToast({
-        title: "Location unavailable",
-        description: "Using Melbourne CBD location",
-        color: "warning",
-        icon: <FaLocationArrow size={20} />,
-        timeout: TOAST_TIMEOUT,
-      });
-    }
-
-    // yay grabbed it, set locations
-    function success(pos: GeolocationPosition) {
-      console.log("yay grabbed location!");
-      setGeoLocation(pos);
-      setUserLocation({
-        lat: pos.coords.latitude,
-        lng: pos.coords.longitude,
-      });
-    }
-
-    // report error if any
-    function error(e: any) {
-      console.error("Error in getting user location: ", e);
-      addToast({
-        title: "Location error",
-        description: "Using Melbourne CBD location",
-        color: "warning",
-        icon: <FaLocationArrow size={20} />,
-        timeout: TOAST_TIMEOUT,
-      });
-    }
-  }
-
-  // refresh location and reports
-  async function refresh() {
-    setIsRefreshing(true);
-    await refreshReports();
-    refreshLocation();
-    setIsRefreshing(false);
-  }
-
-  // update location for new lat lng
-  function handleLocationChange(newLocation: { lat: number; lng: number }) {
-    setUserLocation(newLocation);
-  }
-
-  // use const since using async
-  // report current location as an inspector
-  const handleReportInspector = async () => {
-    if (!user) {
-      window.location.href = "/signin";
-
-      return;
-    }
-
-    setIsReporting(true);
-
-    // if location not available, send error toast
-    if (!userLocation) {
-      addToast({
-        title: "Error",
-        description: "Location not available yet",
-        color: "warning",
-        timeout: TOAST_TIMEOUT,
-      });
-      setIsReporting(false);
-
-      return;
-    }
-
-    const errorCallback = (error: any) => {
-      if (error.code === "42501") {
-        addToast({
-          title: "Error",
-          description: "You need to be signed in to report inspectors",
-          color: "warning",
-          timeout: TOAST_TIMEOUT,
-        });
-        setIsReporting(false);
-
-        return;
+        setTodayReports(todayCount);
+        setTotalReports(totalCount);
+        setDangerLevel(getDangerLevel(todayCount));
+      } catch (error) {
+        console.error("Error fetching report stats:", error);
+      } finally {
+        setIsLoading(false);
       }
-
-      addToast({
-        title: "Error",
-        description: "Failed to report inspector",
-        color: "danger",
-        variant: "bordered",
-        timeout: TOAST_TIMEOUT,
-      });
-      setIsReporting(false);
-      console.error("Error reporting inspector:", error);
     };
 
-    // report inspector location - if dragged report 100m accuracy
-    const success = await reportInspector(
-      errorCallback,
-      userLocation,
-      inspectorReports,
-    );
+    fetchReportStats();
+  }, []);
 
-    // if successfully, send toast and refresh reports
-    if (success) {
-      addToast({
-        title: "Inspector reported",
-        description: "Thank you for reporting!",
-        color: "success",
-        timeout: TOAST_TIMEOUT,
-      });
-      setIsReporting(false);
-
-      // refresh reports
-      refreshReports();
+  function getDangerLevelColor(level: string): string {
+    switch (level) {
+      case "Low":
+        return "text-green-500";
+      case "Medium":
+        return "text-yellow-500";
+      case "High":
+        return "text-orange-500";
+      case "Very High":
+        return "text-red-500";
+      default:
+        return "text-gray-500";
     }
-  };
+  }
 
   return (
-    <>
-      <div className="flex justify-center h-full">
-        <Card
-          isFooterBlurred
-          className="max-w-[1000px] w-full max-h-dvh mb-8 relative overflow-hidden"
-        >
-          <LeafletMapWrapper
-            geoLocation={geoLocation}
-            inspectorReports={inspectorReports}
-            userLocation={userLocation}
-            onLocationChange={handleLocationChange}
-          />
-          <CardFooter className="flex justify-center gap-4 overflow-hidden py-3 absolute bottom-1 left-1/2 transform -translate-x-1/2 before:rounded-xl rounded-large w-[calc(100%-8px)] lg:w-auto z-10">
+    <div className="flex flex-col items-center">
+      <section className="w-full bg-gradient-to-b from-blue-800/20 to-purple-800/20 dark:from-blue-900/20 dark:to-purple-900/20 py-20 px-4">
+        <div className="max-w-5xl mx-auto text-center">
+          <div className="flex justify-center mb-4">
+            <Image
+              alt="Logo"
+              className="rounded-full"
+              height={120}
+              src="/icon.png"
+              width={120}
+            />
+          </div>
+          <h1 className={title({ color: "blue", size: "lg" })}>
+            PTV Inspector Tracker
+          </h1>
+          <p className={`${subtitle()} max-w-3xl mx-auto mt-6 mb-10 text-lg`}>
+            Real-time tracking and reporting of Public Transport Victoria
+            inspectors to help commuters avoid unwanted encounters and unfair
+            treatment.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
             <Button
-              aria-label="Refresh"
-              className="w-full sm:w-auto text-lg"
+              className="font-medium px-8"
               color="primary"
-              isLoading={isRefreshing}
-              startContent={!isRefreshing && <FaSyncAlt />}
-              variant="light"
-              onPress={refresh}
+              size="lg"
+              startContent={<FaMapMarkerAlt />}
+              variant="shadow"
+              onPress={() => router.push("/map")}
             >
-              Refresh
+              Open Live Map
             </Button>
+            {!user && (
+              <Button
+                className="font-medium px-8"
+                color="success"
+                size="lg"
+                startContent={<FaUserShield />}
+                variant="ghost"
+                onPress={() => router.push("/signin")}
+              >
+                Sign In to Report
+              </Button>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <section className="w-full py-10 px-4 bg-gradient-to-r from-default-50/50 to-default-100/50 dark:from-default-50/5 dark:to-default-100/10">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="bg-white/80 dark:bg-default/50">
+              <CardBody className="flex flex-col items-center text-center py-6">
+                <FaChartBar className="text-blue-500 text-3xl mb-3" />
+                <h3 className="text-lg font-bold">Reports Today</h3>
+                {isLoading ? (
+                  <div className="animate-pulse bg-default-200 h-8 w-16 rounded-lg mt-2" />
+                ) : (
+                  <p className="text-4xl font-bold text-blue-600 dark:text-blue-400">
+                    {todayReports}
+                  </p>
+                )}
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                  In the last 24 hours
+                </p>
+              </CardBody>
+            </Card>
+
+            <Card className="bg-white/80 dark:bg-default/50">
+              <CardBody className="flex flex-col items-center text-center py-6">
+                <FaExclamationTriangle
+                  className="text-3xl mb-3"
+                  style={{
+                    color: isLoading
+                      ? "#888"
+                      : getDangerLevelColor(dangerLevel),
+                  }}
+                />
+                <h3 className="text-lg font-bold">Inspector Danger Level</h3>
+                {isLoading ? (
+                  <div className="animate-pulse bg-default-200 h-8 w-24 rounded-lg mt-2" />
+                ) : (
+                  <p
+                    className={`text-4xl font-bold ${getDangerLevelColor(dangerLevel)}`}
+                  >
+                    {dangerLevel}
+                  </p>
+                )}
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                  Based on recent activity
+                </p>
+              </CardBody>
+            </Card>
+
+            <Card className="bg-white/80 dark:bg-default/50">
+              <CardBody className="flex flex-col items-center text-center py-6">
+                <FaMapMarkerAlt className="text-purple-500 text-3xl mb-3" />
+                <h3 className="text-lg font-bold">Total Reports</h3>
+                {isLoading ? (
+                  <div className="animate-pulse bg-default-200 h-8 w-16 rounded-lg mt-2" />
+                ) : (
+                  <p className="text-4xl font-bold text-purple-600 dark:text-purple-400">
+                    {totalReports}
+                  </p>
+                )}
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                  Since launch
+                </p>
+              </CardBody>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      <section className="w-full max-w-6xl mx-auto py-16 px-4">
+        <h2 className={title({ color: "yellow", size: "md" })}>Key Features</h2>
+        <p className={subtitle()}>
+          Help the community stay informed and travel safely
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+          <Card className="border-2 border-blue-400 dark:border-blue-600">
+            <CardHeader className="flex gap-3 bg-blue-100 dark:bg-blue-900/30">
+              <SiLeaflet className="text-blue-600 dark:text-blue-400 text-xl" />
+              <h4 className="font-semibold text-blue-700 dark:text-blue-300">
+                Interactive Map
+              </h4>
+            </CardHeader>
+            <CardBody>
+              <p>
+                View real-time inspector locations with our interactive map
+                powered by Leaflet and OpenStreetMap.
+              </p>
+            </CardBody>
+          </Card>
+
+          <Card className="border-2 border-green-400 dark:border-green-600">
+            <CardHeader className="flex gap-3 bg-green-100 dark:bg-green-900/30">
+              <FaClock className="text-green-600 dark:text-green-400 text-xl" />
+              <h4 className="font-semibold text-green-700 dark:text-green-300">
+                Real-Time Updates
+              </h4>
+            </CardHeader>
+            <CardBody>
+              <p>
+                Get immediate updates on inspector locations reported by our
+                community of users.
+              </p>
+            </CardBody>
+          </Card>
+
+          <Card className="border-2 border-purple-400 dark:border-purple-600">
+            <CardHeader className="flex gap-3 bg-purple-100 dark:bg-purple-900/30">
+              <FaBell className="text-purple-600 dark:text-purple-400 text-xl" />
+              <h4 className="font-semibold text-purple-700 dark:text-purple-300">
+                Push Notifications
+              </h4>
+            </CardHeader>
+            <CardBody>
+              <p>
+                Subscribe to receive alerts when inspectors are reported in your
+                area.
+              </p>
+            </CardBody>
+          </Card>
+        </div>
+      </section>
+
+      <section className="w-full bg-default-50 dark:bg-default-100/5 py-16">
+        <div className="max-w-5xl mx-auto px-4 flex flex-col lg:flex-row items-center gap-10">
+          <div className="lg:w-1/2 order-2 lg:order-1">
+            <h2 className={title({ color: "blue", size: "sm" })}>
+              See Inspectors in Real-Time
+            </h2>
+            <p className={`${subtitle()} my-4`}>
+              Our heatmap visualization shows you where inspectors have been
+              reported recently, helping you plan your journey with confidence.
+            </p>
             <Button
-              aria-label="Report Inspector"
-              className="w-full sm:w-auto text-lg"
-              color="danger"
-              isLoading={isReporting}
-              startContent={!isReporting && <FaExclamationCircle />}
-              variant="bordered"
-              onPress={handleReportInspector}
+              className="mt-4"
+              color="primary"
+              size="lg"
+              variant="shadow"
+              onPress={() => router.push("/map")}
             >
-              Report
+              Open Map View
             </Button>
-          </CardFooter>
-        </Card>
-      </div>
-    </>
+          </div>
+          <div className="w-full order-1 lg:order-2 relative px-4">
+            <div className="aspect-video relative bg-default-200 dark:bg-default-700 rounded-xl overflow-hidden w-full">
+              {/* Heatmap Blots */}
+              <div className="absolute inset-0">
+                <div className="absolute top-10 left-20 w-10 h-10 rounded-full bg-red-400 opacity-60 blur-sm" />
+                <div className="absolute bottom-12 right-16 w-16 h-16 rounded-full bg-orange-400 opacity-60 blur-xl" />
+                <div className="absolute top-1/2 left-1/4 w-8 h-8 rounded-full bg-blue-400 opacity-60 blur-md" />
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <FaMapMarkerAlt className="text-primary/50" size={60} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="w-full max-w-5xl mx-auto py-16 px-4">
+        <h2 className={title({ color: "yellow", size: "sm" })}>
+          About the Project
+        </h2>
+        <p className={subtitle()}>Built by the community, for the community</p>
+        <div className="mt-6">
+          <p className="mb-4">
+            The PTV Inspector Tracker was created in response to growing
+            concerns about how Public Transport Victoria inspectors interact
+            with passengers. Our goal is to provide a transparent platform where
+            commuters can report inspector locations and help others adjust
+            their travel plans if needed.
+          </p>
+          <Button
+            color="primary"
+            variant="light"
+            onPress={() => router.push("/about")}
+          >
+            Learn More About This Project
+          </Button>
+        </div>
+      </section>
+
+      <section className="w-full bg-gradient-to-r from-blue-800/20 to-red-800/20 dark:from-blue-900/20 dark:to-red-900/20 py-10">
+        <div className="max-w-5xl mx-auto px-4 text-center">
+          <h3 className={title({ color: "blue", size: "sm" })}>
+            Join the Community
+          </h3>
+          <p className={`${subtitle()} mt-2 mb-6`}>
+            Help make public transport better for everyone
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Button
+              className="w-full sm:w-auto"
+              color="primary"
+              size="lg"
+              variant="shadow"
+              onPress={() => router.push("/map")}
+            >
+              View the Map
+            </Button>
+            {!user && (
+              <Button
+                color="success"
+                size="lg"
+                variant="ghost"
+                onPress={() => router.push("/signin")}
+              >
+                Sign In
+              </Button>
+            )}
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }

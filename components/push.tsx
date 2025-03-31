@@ -162,7 +162,7 @@ export default function PushNotificationManager() {
   return (
     <>
       {subscription ? (
-        <div className="p-3 bg-default-50 rounded-medium">
+        <div className="p-3 rounded-medium">
           <div className="flex flex-col items-start gap-2 mb-2">
             <div className="flex flex-row items-center gap-2">
               <Button
@@ -188,7 +188,7 @@ export default function PushNotificationManager() {
           </div>
         </div>
       ) : (
-        <div className="p-3 bg-default-50 rounded-medium">
+        <div className="p-3 rounded-medium">
           <div className="flex flex-col items-start gap-2 mb-2">
             <Button
               color="primary"

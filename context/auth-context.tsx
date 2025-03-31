@@ -7,6 +7,8 @@ import { supabase } from "@/supabase/client";
 
 interface AuthContextProps {
   user: User | null;
+  provider: string | null;
+  avatar: string | null;
   session: Session | null;
   isLoading: boolean;
   signOut: () => Promise<void>;
@@ -14,6 +16,8 @@ interface AuthContextProps {
 
 const AuthContext = createContext<AuthContextProps>({
   user: null,
+  provider: null,
+  avatar: null,
   session: null,
   isLoading: true,
   signOut: async () => {},
@@ -58,9 +62,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await supabase.auth.signOut();
   };
 
+  const provider = user?.app_metadata.provider ?? null;
+  const avatar = user?.user_metadata.avatar_url ?? null;
+
   // provide user, session, loading state and signOut function to whole app
-  const value = {
+  const value: AuthContextProps = {
     user,
+    provider,
+    avatar,
     session,
     isLoading,
     signOut,
