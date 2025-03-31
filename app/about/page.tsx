@@ -22,12 +22,13 @@ export default function AboutPage() {
 
       <div className="my-6 p-4 bg-amber-100 dark:bg-amber-900/30 border-l-4 border-amber-500 rounded mb-16">
         <p className="text-amber-800 dark:text-amber-200">
-          <strong>NOTE:</strong> Currently a work in progress! You can help out
-          by sharing this website online or starring the project on GitHub.
+          <strong>NOTE:</strong> Currently a work in progress! You can help by
+          sharing this website or starring the project on GitHub.
         </p>
       </div>
 
       <div className="pb-8">
+        <h3 className={title({ size: "sm", color: "yellow" })}>Features</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
           <Card className="border-2 border-blue-400 dark:border-blue-600">
             <CardHeader className="flex gap-3 bg-blue-100 dark:bg-blue-900/30">
@@ -38,8 +39,8 @@ export default function AboutPage() {
             </CardHeader>
             <CardBody>
               <p>
-                Employs the Leaflet API and OpenStreetMap for mapping; uses
-                markers and heatmaps to display inspector locations.
+                Employs the Leaflet API and OpenStreetMap for mapping and uses
+                heatmaps to display inspector locations.
               </p>
             </CardBody>
           </Card>
@@ -93,7 +94,7 @@ export default function AboutPage() {
       </div>
 
       <div className="pt-14 pb-8">
-        <h3 className={title({ size: "sm", color: "green" })}>Tech Stack</h3>
+        <h3 className={title({ size: "sm", color: "yellow" })}>Tech Stack</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
           <a href="https://nextjs.org" rel="noreferrer" target="_blank">
             <Button
@@ -150,7 +151,7 @@ export default function AboutPage() {
       </div>
 
       <div className="pt-16">
-        <h2 className={title({ size: "sm", color: "cyan" })}>Roadmap</h2>
+        <h2 className={title({ size: "sm", color: "yellow" })}>Roadmap</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
           <Card className="border border-default-200">
             <CardHeader className="flex gap-3">
