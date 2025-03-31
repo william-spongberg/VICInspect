@@ -85,7 +85,7 @@ export default function LeafletMap({
       <MapContainer
         attributionControl={true}
         center={[userLocation.lat, userLocation.lng]}
-        className="w-full h-full"
+        className="w-full h-full z-[1]"
         dragging={true}
         maxZoom={MAX_ZOOM}
         minZoom={MIN_ZOOM}
