@@ -39,13 +39,13 @@ export default function RootLayout({
       <head />
       <body
         className={clsx(
-          "min-h-screen bg-background font-sans antialiased",
+          "min-h-dvh bg-background font-sans antialiased",
           fontSans.variable,
         )}
       >
         <AuthProvider>
           <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-            <div className="relative flex flex-col h-screen">
+            <div className="relative flex flex-col h-dvh">
               <Navbar />
               <main className="container max-w-full max-h-full mx-auto pb-0 flex-grow z-0 pt-0">
                 {children}

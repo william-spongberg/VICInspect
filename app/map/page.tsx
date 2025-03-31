@@ -203,7 +203,7 @@ export default function InspectorMap() {
       <div className="flex justify-center h-full pt-0 pb-0">
         <Card
           isFooterBlurred
-          className="max-w-dvw w-full max-h-dvh rounded-none relative overflow-hidden"
+          className="max-w-dvw w-full max-h-screen rounded-none relative overflow-hidden"
         >
           <LeafletMapWrapper
             geoLocation={geoLocation}
@@ -211,7 +211,7 @@ export default function InspectorMap() {
             userLocation={userLocation}
             onLocationChange={handleLocationChange}
           />
-          <CardFooter className="flex flex-col gap-4 pt-0 overflow-hidden absolute bottom-1 left-1/2 transform -translate-x-1/2 before:rounded-xl rounded-large w-[calc(100%-8px)] lg:w-auto z-10">
+          <CardFooter className="flex flex-col gap-4 pt-0 overflow-hidden absolute bottom-5 left-1/2 transform -translate-x-1/2 before:rounded-xl rounded-large w-[calc(100%-8px)] lg:w-auto z-10">
             <div className="flex flex-row gap-4 w-full">
               <Button
                 aria-label="Refresh"
