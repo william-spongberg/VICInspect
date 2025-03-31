@@ -16,7 +16,11 @@ import Image from "next/image";
 
 import { title, subtitle } from "@/components/primitives";
 import { useAuth } from "@/context/auth-context";
-import { getReportCount, getDangerLevel } from "@/supabase/reports";
+import {
+  getReportCountToday,
+  getReportCountTotal,
+  getDangerLevel,
+} from "@/supabase/reports";
 
 export default function Home() {
   const router = useRouter();
@@ -30,8 +34,8 @@ export default function Home() {
     const fetchReportStats = async () => {
       setIsLoading(true);
       try {
-        const todayCount = await getReportCount(24);
-        const totalCount = await getReportCount();
+        const todayCount = await getReportCountToday();
+        const totalCount = await getReportCountTotal();
 
         setTodayReports(todayCount);
         setTotalReports(totalCount);
