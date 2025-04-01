@@ -15,7 +15,7 @@ const RECENT_REPORTS_HOURS = 8;
 // save current location as an inspector report
 export async function reportInspector(
   errorCallback: (error: any) => void,
-  location: google.maps.LatLngLiteral,
+  location: { lat: number; lng: number },
   inspectorReports: InspectorReport[],
 ): Promise<boolean> {
   try {
