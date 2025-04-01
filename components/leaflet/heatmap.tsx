@@ -34,6 +34,7 @@ export default function LeafletHeatMap({
       maxZoom={MAX_ZOOM}
       minOpacity={0.5}
       radius={25}
+      useWeight={true}
     />
   );
 }

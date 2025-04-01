@@ -1,21 +1,116 @@
-import { supabase, getSession } from "./client";
+import { User } from "@supabase/supabase-js";
+
+import { supabase } from "./client";
 
 export type InspectorReport = {
   id: number;
   user_id: string;
+  user_name: string;
   latitude: number;
   longitude: number;
   votes: number;
+  description: string;
   created_at: string;
 };
 
+export type ReportVote = {
+  id: number;
+  report_id: number;
+  user_id: string;
+  upvote: boolean;
+};
+
 const DB_REPORTS_TABLE = "inspector_reports";
+const DB_VOTES_TABLE = "report_votes";
 const RECENT_REPORTS_HOURS = 8;
 
-// save current location as an inspector report
-export async function reportInspector(
+export async function voteReport(
+  reportId: number,
+  userId: string,
+  upvote: boolean,
   errorCallback: (error: any) => void,
+): Promise<boolean> {
+  try {
+    // check if voting on own report
+    const { data: report, error: reportError } = await supabase
+      .from(DB_REPORTS_TABLE)
+      .select("id, user_id")
+      .eq("id", reportId)
+      .single();
+
+    if (reportError) throw reportError;
+    if (report.user_id === userId) {
+      throw new Error("You cannot vote on your own report.");
+    }
+
+    // check if already voted on report
+    const { data: existingVote, error: existingError } = await supabase
+      .from(DB_VOTES_TABLE)
+      .select("*")
+      .eq("user_id", userId)
+      .eq("report_id", reportId);
+
+    if (existingError) throw existingError;
+
+    if (existingVote && existingVote.length > 0) {
+      if (existingVote?.some((vote) => vote.upvote === upvote)) {
+        throw new Error("Already voted this way for the report.");
+      } else {
+        // update with new vote
+        const { error: updateError } = await supabase
+          .from(DB_VOTES_TABLE)
+          .update({ upvote: upvote })
+          .eq("user_id", userId)
+          .eq("report_id", reportId);
+
+        if (updateError) throw updateError;
+
+        return true;
+      }
+    }
+
+    // otherwise, its a new vote to insert
+    const { error } = await supabase.from("report_votes").insert({
+      report_id: reportId,
+      user_id: userId,
+      upvote: upvote,
+    });
+
+    if (error) throw error;
+
+    // increment or decrement report votes
+    if (upvote) {
+      const { data, error: voteError } = await supabase.rpc(
+        "increment_report_votes",
+        { report_id: reportId },
+      );
+
+      if (voteError) throw voteError;
+      console.log(data);
+    } else {
+      const { data, error: voteError } = await supabase.rpc(
+        "decrement_report_votes",
+        { report_id: reportId },
+      );
+
+      if (voteError) throw voteError;
+      console.log(data);
+    }
+
+    return true;
+  } catch (error) {
+    errorCallback(error);
+
+    return false;
+  }
+}
+
+// save current location as an inspector report
+export async function createReport(
+  errorCallback: (error: any) => void,
+  user: User,
   location: { lat: number; lng: number },
+  description: string,
   inspectorReports: InspectorReport[],
 ): Promise<boolean> {
   try {
@@ -27,29 +122,21 @@ export async function reportInspector(
       return latDiff < 0.0005 && lngDiff < 0.0005;
     });
 
-    // update existing report if found and upvote
+    // if report is too similar, don't post
     if (similarReport) {
-      const session = await getSession();
-
-      // if user is not the one who created the report, upvote it
-      if (session?.user?.id !== similarReport.user_id) {
-        const { error } = await supabase
-          .from(DB_REPORTS_TABLE)
-          .update({
-            created_at: new Date().toISOString(),
-            votes: similarReport.votes + 1,
-          })
-          .eq("id", similarReport.id);
-
-        if (error) throw error;
-      }
+      throw new Error("Report is too close to an existing report.");
     } else {
-      const { error } = await supabase.from(DB_REPORTS_TABLE).insert({
-        latitude: location.lat,
-        longitude: location.lng,
-      });
+      // yay create new report
+      const { error: reportError } = await supabase
+        .from(DB_REPORTS_TABLE)
+        .insert({
+          user_name: user.user_metadata.name,
+          description: description,
+          latitude: location.lat,
+          longitude: location.lng,
+        });
 
-      if (error) throw error;
+      if (reportError) throw reportError;
     }
 
     return true;

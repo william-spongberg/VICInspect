@@ -38,14 +38,18 @@ export interface LeafletMapProps {
   geoLocation: GeolocationPosition | null;
   userLocation: { lat: number; lng: number };
   inspectorReports: InspectorReport[];
+  userId: string;
   onLocationChange?: (newLocation: { lat: number; lng: number }) => void;
+  errorCallback: (error: any) => void;
 }
 
 export default function LeafletMap({
   geoLocation,
   userLocation,
   inspectorReports,
+  userId,
   onLocationChange,
+  errorCallback,
 }: LeafletMapProps) {
   const [accuracy, setAccuracy] = useState<number>(
     geoLocation?.coords.accuracy ?? DEFAULT_ACCURACY,
@@ -117,7 +121,11 @@ export default function LeafletMap({
         )}
 
         {/* Inspector location markers */}
-        <ReportMarkers inspectorReports={inspectorReports} />
+        <ReportMarkers
+          errorCallback={errorCallback}
+          reports={inspectorReports}
+          userId={userId}
+        />
 
         {/* Inspector heatmap */}
         <LeafletHeatMap inspectorReports={inspectorReports} />

@@ -71,7 +71,7 @@ export default function SignInPage() {
           </CardHeader>
           <Divider />
           <CardBody className="py-6 px-5">
-          <Button
+            <Button
               className="w-full flex items-center justify-center gap-2 py-6 mb-3"
               color="default"
               size="lg"

@@ -6,14 +6,21 @@ import {
   FaSyncAlt,
   FaExclamationCircle,
 } from "react-icons/fa";
-import { addToast, Card, CardFooter, Button } from "@heroui/react";
+import {
+  addToast,
+  Card,
+  CardFooter,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure,
+} from "@heroui/react";
 import { useRouter } from "next/navigation";
 
-import {
-  reportInspector,
-  getReports,
-  InspectorReport,
-} from "@/supabase/reports";
+import { createReport, getReports, InspectorReport } from "@/supabase/reports";
 import LeafletMapWrapper from "@/components/leaflet/map-wrapper";
 import { useAuth } from "@/context/auth-context";
 
@@ -25,6 +32,7 @@ const MELBOURNE_CBD = {
 };
 
 export default function InspectorMap() {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [geoLocation, setGeoLocation] = useState<GeolocationPosition | null>(
     null,
   );
@@ -37,6 +45,7 @@ export default function InspectorMap() {
   );
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isReporting, setIsReporting] = useState(false);
+  const [description, setDescription] = useState("");
   const { user } = useAuth();
   const router = useRouter();
 
@@ -138,6 +147,7 @@ export default function InspectorMap() {
     }
 
     setIsReporting(true);
+    refreshReports();
 
     // if location not available, send error toast
     if (!userLocation) {
@@ -176,9 +186,11 @@ export default function InspectorMap() {
     };
 
     // report inspector location - if dragged report 100m accuracy
-    const success = await reportInspector(
+    const success = await createReport(
       errorCallback,
+      user,
       userLocation,
+      description,
       inspectorReports,
     );
 
@@ -191,6 +203,7 @@ export default function InspectorMap() {
         timeout: TOAST_TIMEOUT,
       });
       setIsReporting(false);
+      setDescription("");
 
       // refresh reports
       refreshReports();
@@ -205,8 +218,18 @@ export default function InspectorMap() {
           className="max-w-dvw w-full max-h-screen rounded-none relative overflow-hidden"
         >
           <LeafletMapWrapper
+            errorCallback={(error) =>
+              addToast({
+                title: "Error",
+                description: error.message,
+                color: "danger",
+                variant: "bordered",
+                timeout: TOAST_TIMEOUT,
+              })
+            }
             geoLocation={geoLocation}
             inspectorReports={inspectorReports}
+            userId={user?.id ?? ""}
             userLocation={userLocation}
             onLocationChange={handleLocationChange}
           />
@@ -230,10 +253,76 @@ export default function InspectorMap() {
                 isLoading={isReporting}
                 startContent={!isReporting && <FaExclamationCircle />}
                 variant="ghost"
-                onPress={handleReportInspector}
+                onPress={onOpen}
               >
                 Report
               </Button>
+              <Modal
+                className="blurred"
+                isOpen={isOpen}
+                onOpenChange={onOpenChange}
+              >
+                <ModalContent>
+                  {(onClose) => (
+                    <>
+                      <ModalHeader className="flex flex-col gap-4 ">
+                        Report Inspector Sighting
+                      </ModalHeader>
+                      <ModalBody>
+                        {user ? (
+                          <>
+                            <p>
+                              Please provide details about the inspector(s)
+                              you&apos;ve spotted. This helps other commuters
+                              stay informed.
+                            </p>
+                            <textarea
+                              className="w-full p-2 border border-gray-300 rounded-md"
+                              placeholder="Description (e.g. Number of inspectors, location details, uniform colors)"
+                              rows={4}
+                              value={description}
+                              onChange={(e) => setDescription(e.target.value)}
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <p>
+                              You need to be signed in to report inspector
+                              sightings. Please sign in to continue.
+                            </p>
+                          </>
+                        )}
+                      </ModalBody>
+                      <ModalFooter>
+                        <Button
+                          color="danger"
+                          variant="light"
+                          onPress={onClose}
+                        >
+                          Cancel
+                        </Button>
+                        {user ? (
+                          <Button
+                            color="primary"
+                            isDisabled={!description.trim()}
+                            isLoading={isReporting}
+                            onPress={handleReportInspector}
+                          >
+                            Report Inspector
+                          </Button>
+                        ) : (
+                          <Button
+                            color="primary"
+                            onPress={() => router.push("/signin")}
+                          >
+                            Sign In
+                          </Button>
+                        )}
+                      </ModalFooter>
+                    </>
+                  )}
+                </ModalContent>
+              </Modal>
             </div>
           </CardFooter>
         </Card>
