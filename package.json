@@ -25,7 +25,6 @@
     "@react-aria/visually-hidden": "3.8.20",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.3",
-    "@vis.gl/react-google-maps": "^1.5.2",
     "clsx": "2.1.1",
     "framer-motion": "^12.6.2",
     "intl-messageformat": "^10.5.0",
