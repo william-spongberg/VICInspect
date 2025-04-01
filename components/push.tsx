@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, addToast } from "@heroui/react";
+import { Button, Card, addToast } from "@heroui/react";
 import { FaBell, FaBellSlash } from "react-icons/fa";
 
 import { sendNotification } from "@/app/actions";
@@ -9,29 +9,27 @@ import {
   subscribeUser,
   unsubscribeUser,
   DbSubscription,
-  getDeviceId,
+  getSubscriptionId,
 } from "@/supabase/subscriptions";
 
-const message = "Test notification!";
+const testMessage = "This is a test";
 
 export default function PushNotificationManager() {
   const [isSupported, setIsSupported] = useState(false);
   const [subscription, setSubscription] = useState<PushSubscription | null>(
-    null,
+    null
   );
   const [dbSubscription, setDbSubscription] = useState<DbSubscription | null>(
-    null,
+    null
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [deviceId, setDeviceId] = useState<string>("");
+  const [subscriptionId, setSubscriptionId] = useState<string>("");
   const { user } = useAuth();
 
   useEffect(() => {
     if ("serviceWorker" in navigator && "PushManager" in window && user) {
       setIsSupported(true);
-      const id = getDeviceId();
-
-      setDeviceId(id);
+      setSubscriptionId(getSubscriptionId(user.id));
       registerServiceWorker();
     }
   }, [user]);
@@ -47,11 +45,11 @@ export default function PushNotificationManager() {
 
     const dbSub = {
       user_id: user.id,
-      device_id: deviceId,
+      device_id: subscriptionId,
       endpoint: sub.endpoint,
       keys: {
         p256dh: Buffer.from(sub.getKey("p256dh") as ArrayBuffer).toString(
-          "base64",
+          "base64"
         ),
         auth: Buffer.from(sub.getKey("auth") as ArrayBuffer).toString("base64"),
       },
@@ -91,7 +89,7 @@ export default function PushNotificationManager() {
       const sub = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(
-          process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
+          process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
         ),
       });
 
@@ -120,8 +118,8 @@ export default function PushNotificationManager() {
   async function unsubscribeFromPush() {
     setIsLoading(true);
     try {
-      if (deviceId) {
-        const result = await unsubscribeUser(deviceId);
+      if (subscriptionId) {
+        const result = await unsubscribeUser(subscriptionId);
 
         if (result.success) {
           if (subscription) {
@@ -145,7 +143,7 @@ export default function PushNotificationManager() {
   // send a test notification
   async function sendTestNotification() {
     if (subscription && user) {
-      await sendNotification(message, dbSubscription!);
+      await sendNotification(testMessage, dbSubscription!);
     }
   }
 
@@ -160,9 +158,14 @@ export default function PushNotificationManager() {
   }
 
   return (
-    <>
+    <Card className="p-4 rounded-medium shadow-none">
+      <div className="text-sm text-default-500">
+        This feature is currently still under development, so only test
+        notifications are available for now. Please check back later for
+        updates.
+      </div>
       {subscription ? (
-        <div className="p-3 rounded-medium">
+        <div className="rounded-medium">
           <div className="flex flex-col items-start gap-2 mb-2">
             <div className="flex flex-row items-center gap-2">
               <Button
@@ -171,7 +174,7 @@ export default function PushNotificationManager() {
                 size="md"
                 onPress={sendTestNotification}
               >
-                Send Test Notification
+                Send Notification
               </Button>
               <Button
                 className="mt-2 w-full sm:w-auto"
@@ -206,7 +209,7 @@ export default function PushNotificationManager() {
           </p> */}
         </div>
       )}
-    </>
+    </Card>
   );
 }
 

@@ -84,13 +84,13 @@ export async function unsubscribeUser(deviceId: string) {
   }
 }
 
-// set device id in local storage
-export function getDeviceId(): string {
+// set id in local storage
+export function getSubscriptionId(userId: string): string {
   if (typeof window === "undefined") {
     return "";
   }
 
-  const storageKey = "ptv-inspector-device-id";
+  const storageKey = `${userId}:ptv-inspector-device-id`;
   let deviceId = localStorage.getItem(storageKey);
 
   if (!deviceId) {
