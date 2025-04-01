@@ -4,6 +4,7 @@ import { DbSubscription } from "@/supabase/subscriptions";
 
 const webpush = require("web-push");
 
+// DEV: generate VAPID keys using web-push library first
 webpush.setVapidDetails(
   "mailto:william@spongberg.dev",
   process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
