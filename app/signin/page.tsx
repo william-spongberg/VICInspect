@@ -12,6 +12,7 @@ import {
   Divider,
   addToast,
 } from "@heroui/react";
+import { FcGoogle } from "react-icons/fc";
 
 import { supabase } from "@/supabase/client";
 import { useAuth } from "@/context/auth-context";
@@ -54,6 +55,10 @@ export default function SignInPage() {
     await handleSignIn("github");
   };
 
+  const handleGoogleSignIn = async () => {
+    await handleSignIn("google");
+  };
+
   return (
     <>
       <div className="flex flex-col items-center justify-center min-h-[70vh] p-4">
@@ -66,6 +71,16 @@ export default function SignInPage() {
           </CardHeader>
           <Divider />
           <CardBody className="py-6 px-5">
+          <Button
+              className="w-full flex items-center justify-center gap-2 py-6 mb-3"
+              color="default"
+              size="lg"
+              startContent={<FcGoogle size={24} />}
+              variant="shadow"
+              onPress={handleGoogleSignIn}
+            >
+              Sign in with Google
+            </Button>
             <Button
               className="w-full flex items-center justify-center gap-2 py-6"
               color="default"

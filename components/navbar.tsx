@@ -17,7 +17,7 @@ import {
 import { link as linkStyles } from "@heroui/theme";
 import NextLink from "next/link";
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
@@ -28,6 +28,9 @@ export const Navbar = () => {
   const { user, avatar, signOut } = useAuth();
   const userName = user?.user_metadata.name ?? "";
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // refresh for new avatar + user data
+  useEffect(() => {}, [user, avatar]);
 
   return (
     <HeroUINavbar

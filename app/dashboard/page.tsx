@@ -12,6 +12,7 @@ import {
   Chip,
   Skeleton,
 } from "@heroui/react";
+import { FcGoogle } from "react-icons/fc";
 
 import { useAuth } from "../../context/auth-context";
 
@@ -28,7 +29,7 @@ export default function Dashboard() {
     if (!isLoading && !user) {
       router.push("/signin");
     }
-  }, [user, isLoading, router]);
+  }, [user, avatar, isLoading, router]);
 
   if (!user && !isLoading) {
     return (
@@ -109,6 +110,8 @@ export default function Dashboard() {
     switch (provider.toLowerCase()) {
       case "github":
         return <GithubIcon size={25} />;
+      case "google":
+        return <FcGoogle size={25} />;
       default:
         return null;
     }
