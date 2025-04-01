@@ -10,8 +10,6 @@ export interface DbSubscription {
     auth: string;
     p256dh: string;
   };
-  created_at: string;
-  updated_at?: string;
 }
 
 const SUBSCRIPTION_TABLE = "subscriptions";
@@ -47,8 +45,6 @@ export async function subscribeUser(sub: DbSubscription) {
         user_id: sub.user_id,
         device_id: sub.device_id,
         keys: sub.keys,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
       };
 
       result = await supabase
