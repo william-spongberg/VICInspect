@@ -52,33 +52,33 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="w-full max-w-5xl mx-auto space-y-6">
+      <div className="w-full max-w-3xl mx-auto space-y-6 pt-20 px-4">
         <Card className="mb-6 shadow-md">
-          <CardHeader className="flex items-center gap-4">
+          <CardHeader className="flex flex-col sm:flex-row items-center gap-4">
             <Skeleton className="rounded-full w-14 h-14" />
-            <div className="flex-grow">
-              <Skeleton className="h-8 w-40 rounded-lg mb-2" />
-              <Skeleton className="h-4 w-60 rounded-lg" />
+            <div className="flex-grow text-center sm:text-left">
+              <Skeleton className="h-8 w-40 rounded-lg mb-2 mx-auto sm:mx-0" />
+              <Skeleton className="h-4 w-60 rounded-lg mx-auto sm:mx-0" />
             </div>
-            <Skeleton className="h-10 w-24 rounded-lg" />
+            <Skeleton className="h-10 w-24 rounded-lg mt-2 sm:mt-0" />
           </CardHeader>
 
           <Divider />
 
-          <CardBody>
+          <CardBody className="py-6 px-3 sm:px-5">
             <div className="grid grid-cols-1 gap-6">
               <div className="space-y-4">
                 <Skeleton className="h-8 w-48 rounded-lg mb-4" />
                 <div className="space-y-3">
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
                     <Skeleton className="h-6 w-28 rounded-lg" />
-                    <Skeleton className="h-8 w-40 rounded-lg" />
+                    <Skeleton className="h-8 w-full sm:w-40 rounded-lg" />
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
                     <Skeleton className="h-6 w-28 rounded-lg" />
-                    <Skeleton className="h-8 w-64 rounded-lg" />
+                    <Skeleton className="h-8 w-full sm:w-64 rounded-lg" />
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
                     <Skeleton className="h-6 w-28 rounded-lg" />
                     <Skeleton className="h-8 w-10 rounded-lg" />
                   </div>
@@ -89,7 +89,7 @@ export default function Dashboard() {
                 <Skeleton className="h-8 w-36 rounded-lg mb-4" />
                 <div className="space-y-3">
                   <Skeleton className="h-12 w-full rounded-lg" />
-                  <Skeleton className="h-10 w-48 rounded-lg" />
+                  <Skeleton className="h-10 w-full sm:w-48 rounded-lg" />
                 </div>
               </div>
             </div>
@@ -118,11 +118,11 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-6 pt-20">
+    <div className="w-full max-w-3xl mx-auto space-y-6 pt-20 px-4">
       <Card className="mb-6 shadow-md">
-        <CardHeader className="flex items-center gap-4">
+        <CardHeader className="flex flex-col sm:flex-row items-center gap-4">
           <Avatar color="secondary" size="lg" src={avatar ?? ""} />
-          <div className="flex-grow">
+          <div className="flex-grow text-center sm:text-left">
             <h2
               className={title({
                 color: "cyan",
@@ -140,38 +140,38 @@ export default function Dashboard() {
               </span>
             </p>
           </div>
-          <Button color="danger" variant="light" onPress={signOut}>
+          <Button color="danger" variant="light" onPress={signOut} className="mt-2 sm:mt-0">
             Sign Out
           </Button>
         </CardHeader>
 
         <Divider />
 
-        <CardBody>
+        <CardBody className="py-6 px-3 sm:px-5">
           <div className="grid grid-cols-1 gap-6">
             <div className="space-y-4">
               <h3
                 className={subtitle({
                   fullWidth: true,
-                  class: "!my-3 !text-xl font-semibold",
+                  class: "!my-3 !text-xl font-semibold text-center sm:text-left",
                 })}
               >
                 Account Information
               </h3>
               <div className="space-y-3">
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
                   <span className="font-medium text-base w-28">User ID:</span>
-                  <Chip size="lg" variant="flat">
-                    {user.id}
+                  <Chip size="lg" variant="flat" className="w-full sm:w-auto overflow-hidden">
+                    <span className="truncate">{user.id}</span>
                   </Chip>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
                   <span className="font-medium text-base w-28">Email:</span>
-                  <Chip color="primary" size="lg" variant="flat">
-                    {user.email ?? "No email provided"}
+                  <Chip color="primary" size="lg" variant="flat" className="w-full sm:w-auto overflow-hidden">
+                    <span className="truncate">{user.email ?? "No email provided"}</span>
                   </Chip>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
                   <span className="font-medium text-base w-28">Provider:</span>
                   {getProviderIcon()}
                 </div>
@@ -182,7 +182,7 @@ export default function Dashboard() {
               <h3
                 className={subtitle({
                   fullWidth: true,
-                  class: "!my-3 !text-xl font-semibold",
+                  class: "!my-3 !text-xl font-semibold text-center sm:text-left",
                 })}
               >
                 Notifications
