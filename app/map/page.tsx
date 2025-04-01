@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 
 import {
   reportInspector,
-  getRecentReports,
+  getReports,
   InspectorReport,
 } from "@/supabase/reports";
 import LeafletMapWrapper from "@/components/leaflet/map-wrapper";
@@ -47,7 +47,7 @@ export default function InspectorMap() {
 
   // grab recent reports within x hours
   async function refreshReports() {
-    const reports = await getRecentReports();
+    const reports = await getReports();
 
     setInspectorReports(reports);
   }
@@ -167,13 +167,12 @@ export default function InspectorMap() {
 
       addToast({
         title: "Error",
-        description: "Failed to report inspector",
+        description: error.message,
         color: "danger",
         variant: "bordered",
         timeout: TOAST_TIMEOUT,
       });
       setIsReporting(false);
-      console.error("Error reporting inspector:", error);
     };
 
     // report inspector location - if dragged report 100m accuracy
