@@ -14,11 +14,12 @@ export async function vote(
   reportId: number,
   userId: string,
   upvote: boolean,
-  errorCallback: (error: any) => void
+  errorCallback: (error: any) => void,
 ): Promise<boolean> {
   try {
     // check if voting on own report
     const votingOwnReport = await checkVotingOwnReport(reportId, userId);
+
     if (votingOwnReport) {
       throw new Error("You cannot vote on your own report.");
     }
@@ -32,12 +33,14 @@ export async function vote(
         await deleteVote(reportId, userId);
         // if upvote, decrement report votes, else increment
         await setReportVotes(reportId, !upvote);
+
         return true;
       } else {
         // if user already voted but with different upvote/downvote, update the vote
         await updateVote(reportId, userId, upvote);
         // increment or decrement report votes
         await setReportVotes(reportId, upvote);
+
         return true;
       }
     }
@@ -58,7 +61,7 @@ export async function vote(
 // check if voting on own report
 export async function checkVotingOwnReport(
   reportId: number,
-  userId: string
+  userId: string,
 ): Promise<boolean> {
   const { data: report, error: reportError } = await supabase
     .from(DB_REPORTS_TABLE)
@@ -77,7 +80,7 @@ export async function checkVotingOwnReport(
 // check if already voted on report
 export async function checkAlreadyVoted(
   reportId: number,
-  userId: string
+  userId: string,
 ): Promise<ReportVote | null> {
   const { data, error } = await supabase
     .from(DB_VOTES_TABLE)
@@ -90,6 +93,7 @@ export async function checkAlreadyVoted(
   if (data && data.length > 0) {
     return data[0];
   }
+
   return null;
 }
 
@@ -97,7 +101,7 @@ export async function checkAlreadyVoted(
 export async function insertVote(
   reportId: number,
   userId: string,
-  upvote: boolean
+  upvote: boolean,
 ): Promise<boolean> {
   const { error } = await supabase.from(DB_VOTES_TABLE).insert({
     report_id: reportId,
@@ -114,7 +118,7 @@ export async function insertVote(
 export async function updateVote(
   reportId: number,
   userId: string,
-  upvote: boolean
+  upvote: boolean,
 ): Promise<boolean> {
   const { error } = await supabase
     .from(DB_VOTES_TABLE)
@@ -130,7 +134,7 @@ export async function updateVote(
 // delete cast vote
 export async function deleteVote(
   reportId: number,
-  userId: string
+  userId: string,
 ): Promise<boolean> {
   const { error } = await supabase
     .from(DB_VOTES_TABLE)
@@ -146,13 +150,14 @@ export async function deleteVote(
 // increment or decrement report votes using supabase function
 export async function setReportVotes(
   reportId: number,
-  upvote: boolean
+  upvote: boolean,
 ): Promise<boolean> {
   const rpcFunction = upvote
     ? "increment_report_votes"
     : "decrement_report_votes";
 
   const { error } = await supabase.rpc(rpcFunction, { report_id: reportId });
+
   if (error) throw error;
 
   return true;

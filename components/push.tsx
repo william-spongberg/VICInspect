@@ -17,10 +17,10 @@ const testMessage = "This is a test";
 export default function PushNotificationManager() {
   const [isSupported, setIsSupported] = useState(false);
   const [subscription, setSubscription] = useState<PushSubscription | null>(
-    null
+    null,
   );
   const [dbSubscription, setDbSubscription] = useState<DbSubscription | null>(
-    null
+    null,
   );
   const [isLoading, setIsLoading] = useState(false);
   const [subscriptionId, setSubscriptionId] = useState<string>("");
@@ -49,7 +49,7 @@ export default function PushNotificationManager() {
       endpoint: sub.endpoint,
       keys: {
         p256dh: Buffer.from(sub.getKey("p256dh") as ArrayBuffer).toString(
-          "base64"
+          "base64",
         ),
         auth: Buffer.from(sub.getKey("auth") as ArrayBuffer).toString("base64"),
       },
@@ -89,7 +89,7 @@ export default function PushNotificationManager() {
       const sub = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(
-          process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
+          process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
         ),
       });
 

@@ -25,7 +25,7 @@ export async function createReport(
   location: { lat: number; lng: number },
   description: string,
   inspectorReports: InspectorReport[],
-  errorCallback: (error: any) => void
+  errorCallback: (error: any) => void,
 ): Promise<boolean> {
   try {
     const similarReport = checkSimilarReport(inspectorReports, location);
@@ -49,7 +49,7 @@ export async function createReport(
 // find if very similar location (within 50m) has already been reported
 export function checkSimilarReport(
   inspectorReports: InspectorReport[],
-  location: { lat: number; lng: number }
+  location: { lat: number; lng: number },
 ): boolean {
   return inspectorReports.some((report) => {
     const latDiff = Math.abs(report.latitude - location.lat);
@@ -63,24 +63,22 @@ export function checkSimilarReport(
 export async function insertReport(
   user: User,
   location: { lat: number; lng: number },
-  description: string
+  description: string,
 ) {
-  const { error } = await supabase
-    .from(DB_REPORTS_TABLE)
-    .insert({
-      user_id: user.id,
-      user_name: user.user_metadata.name,
-      description: description,
-      latitude: location.lat,
-      longitude: location.lng,
-    });
+  const { error } = await supabase.from(DB_REPORTS_TABLE).insert({
+    user_id: user.id,
+    user_name: user.user_metadata.name,
+    description: description,
+    latitude: location.lat,
+    longitude: location.lng,
+  });
 
   if (error) throw error;
 }
 
 // get recent inspector reports
 export async function getReports(
-  hours = RECENT_REPORTS_HOURS
+  hours = RECENT_REPORTS_HOURS,
 ): Promise<InspectorReport[]> {
   // grab all reports from the last 'x' hours
   const { data, error } = await supabase
@@ -88,7 +86,7 @@ export async function getReports(
     .select("*")
     .gte(
       "created_at",
-      new Date(Date.now() - hours * 60 * 60 * 1000).toISOString()
+      new Date(Date.now() - hours * 60 * 60 * 1000).toISOString(),
     )
     .order("created_at", { ascending: false });
 
@@ -109,7 +107,7 @@ export async function getReportCount(hours = 0, userId = ""): Promise<number> {
   // if hours is provided, filter by created_at
   if (hours > 0) {
     const fromDate = new Date(
-      Date.now() - hours * 60 * 60 * 1000
+      Date.now() - hours * 60 * 60 * 1000,
     ).toISOString();
 
     query = query.gte("created_at", fromDate);
@@ -147,7 +145,7 @@ export async function getEdgeReportCountTotal(): Promise<number> {
 
     if (!response.ok) {
       throw new Error(
-        `Error fetching total report count: ${response.statusText}`
+        `Error fetching total report count: ${response.statusText}`,
       );
     }
     const data = await response.json();
@@ -156,7 +154,7 @@ export async function getEdgeReportCountTotal(): Promise<number> {
   } catch (error) {
     console.error(
       "Error fetching total report count from Edge Function:",
-      error
+      error,
     );
 
     // fallback to direct call if Edge Function fails
@@ -171,7 +169,7 @@ export async function getEdgeReportCountToday(): Promise<number> {
 
     if (!response.ok) {
       throw new Error(
-        `Error fetching today's report count: ${response.statusText}`
+        `Error fetching today's report count: ${response.statusText}`,
       );
     }
     const data = await response.json();
@@ -180,7 +178,7 @@ export async function getEdgeReportCountToday(): Promise<number> {
   } catch (error) {
     console.error(
       "Error fetching today's report count from Edge Function:",
-      error
+      error,
     );
 
     // fallback to direct call if Edge Function fails

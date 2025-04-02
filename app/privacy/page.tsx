@@ -10,9 +10,9 @@ export default function PrivacyPage() {
       </div>
 
       <p className={subtitle({})}>
-        TransitEye is committed to providing quality services to you,
-        and this policy outlines our ongoing obligations to you in respect of
-        how we manage your Personal Information.
+        TransitEye is committed to providing quality services to you, and this
+        policy outlines our ongoing obligations to you in respect of how we
+        manage your Personal Information.
       </p>
 
       <p className={subtitle({})}>
@@ -163,9 +163,9 @@ export default function PrivacyPage() {
       </p>
 
       <p className={subtitle({})}>
-        TransitEye will not charge any fee for your access request,
-        but we may charge an administrative fee for providing a copy of your
-        Personal Information.
+        TransitEye will not charge any fee for your access request, but we may
+        charge an administrative fee for providing a copy of your Personal
+        Information.
       </p>
 
       <p className={subtitle({})}>
