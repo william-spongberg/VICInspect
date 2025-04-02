@@ -42,7 +42,7 @@ export const Navbar = () => {
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
-            <p className="font-bold text-inherit">PTV Inspector Tracker</p>
+            <p className="font-bold text-inherit">Transit Eye</p>
           </NextLink>
         </NavbarBrand>
         <ul className="hidden lg:flex gap-4 justify-start ml-2">
@@ -63,7 +63,7 @@ export const Navbar = () => {
         </ul>
       </NavbarContent>
 
-      <NavbarContent className="flex basis-1/5 sm:basis-full" justify="end">
+      <NavbarContent className="" justify="end">
         <NavbarItem className="flex gap-2">
           <Link isExternal aria-label="Github" href={siteConfig.links.github}>
             <GithubIcon className="text-default-500" />
@@ -113,7 +113,7 @@ export const Navbar = () => {
         </Dropdown>
       </NavbarContent>
 
-      <NavbarContent className="sm:hidden" justify="end">
+      <NavbarContent className="lg:hidden" justify="center">
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         />
