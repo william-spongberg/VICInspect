@@ -19,4 +19,5 @@
 - notify users of report description limit of 100 chars
 - add facebook authentication if possible (difficult business verification process)
 - eventually add more report regions rather than just Victoria
-- turn into public transport version of Waze? costly for planning routes...
+- turn into public transport version of Waze? costly for planning routes... or not <https://openrouteservice.org/>
+
