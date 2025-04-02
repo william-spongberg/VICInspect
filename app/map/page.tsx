@@ -310,7 +310,10 @@ export default function InspectorMap() {
                             color="primary"
                             isDisabled={!description.trim()}
                             isLoading={isReporting}
-                            onPress={handleReportInspector}
+                            onPress={() => {
+                              onClose();
+                              handleReportInspector();
+                            }}
                           >
                             Report Inspector
                           </Button>
