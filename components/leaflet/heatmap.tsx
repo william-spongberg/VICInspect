@@ -8,10 +8,11 @@ export interface LeafletHeatMapProps {
   inspectorReports: InspectorReport[];
 }
 
-const JUST_CREATED = 0.5; // 30 mins
-const RECENT = 1; // 1 hour
-const WHILE_AGO = 2; // 2 hours
-const OLD = 4; // 4 hours
+// between 0-1
+const JUST_CREATED = 0.75;
+const RECENT = 0.5;
+const WHILE_AGO = 0.25;
+const OLD = 0.1;
 
 export default function LeafletHeatMap({
   inspectorReports,
@@ -21,10 +22,17 @@ export default function LeafletHeatMap({
   const radius = (currentZoom / MAX_ZOOM) * 18;
 
   const heatmapData = inspectorReports.map((report) => {
-    const hoursAgo =
-      (Date.now() - new Date(report.created_at).getTime()) / (1000 * 60 * 60);
+    const minutesAgo =
+      (Date.now() - new Date(report.created_at).getTime()) / (1000 * 60);
 
-    const weight = (report.votes + 1) / (hoursAgo + 1);
+    // decay based on time (older reports have lower weight)
+    // approaches 0 as time increases
+    const timeFactor = Math.max(0, 1 - minutesAgo / 480); // fully decay after 8 hours (480 min)
+
+    const voteBoost = Math.min(0.5, report.votes * 0.1); // max 0.5 boost from votes
+
+    // final weight between 0 and 1
+    const weight = Math.min(1, timeFactor + voteBoost);
 
     return {
       id: report.id,
@@ -35,18 +43,18 @@ export default function LeafletHeatMap({
   });
 
   const getColor = (weight: number) => {
-    if (weight < JUST_CREATED) {
-      return "rgba(255, 0, 0, 0.8)"; // Red
-    } else if (weight < RECENT) {
-      return "rgba(255, 127, 0, 0.8)"; // Orange
-    } else if (weight < WHILE_AGO) {
-      return "rgba(255, 255, 0, 0.8)"; // Yellow
-    } else if (weight < OLD) {
-      return "rgba(0, 0, 255, 0.8)"; // Blue
+    if (weight >= JUST_CREATED) {
+      return "rgba(255, 0, 0, 0.8)"; // red
+    } else if (weight >= RECENT) {
+      return "rgba(255, 127, 0, 0.8)"; // orange
+    } else if (weight >= WHILE_AGO) {
+      return "rgba(255, 255, 0, 0.8)"; // yellow
+    } else if (weight >= OLD) {
+      return "rgba(0, 0, 255, 0.8)"; // blue
     }
 
     // ancient now, dark blue
-    return "rgba(0, 0, 139, 0.8)"; // Dark Blue
+    return "rgba(0, 0, 139, 0.8)";
   };
 
   return (
