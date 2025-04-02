@@ -48,6 +48,7 @@ export default function LeafletHeatMap({
         <CircleMarker
           key={point.id}
           center={[point.lat, point.lng]}
+          className="blur-[3px]"
           color="rgba(0,0,0,0.3)"
           fillColor={getColor(point.decay)}
           fillOpacity={point.opacity}
