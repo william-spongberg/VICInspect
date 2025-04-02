@@ -8,12 +8,6 @@ export interface LeafletHeatMapProps {
   inspectorReports: InspectorReport[];
 }
 
-// between 0-1
-const JUST_CREATED = 0.75;
-const RECENT = 0.5;
-const WHILE_AGO = 0.25;
-const OLD = 0.1;
-
 export default function LeafletHeatMap({
   inspectorReports,
 }: LeafletHeatMapProps) {
@@ -27,34 +21,25 @@ export default function LeafletHeatMap({
 
     // decay based on time (older reports have lower weight)
     // approaches 0 as time increases
-    const timeFactor = Math.max(0, 1 - minutesAgo / 480); // fully decay after 8 hours (480 min)
+    const decay = Math.max(0, 1 - minutesAgo / 480); // fully decay after 8 hours (480 min)
 
-    const voteBoost = Math.min(0.5, report.votes * 0.1); // max 0.5 boost from votes
-
-    // final weight between 0 and 1
-    const weight = Math.min(1, timeFactor + voteBoost);
+    // opacity based on votes (0.5 base + 2.5% from votes)
+    const opacity = Math.min(1.0, 0.5 + report.votes * 0.025);
 
     return {
       id: report.id,
       lat: report.latitude,
       lng: report.longitude,
-      weight,
+      decay,
+      opacity,
     };
   });
 
-  const getColor = (weight: number) => {
-    if (weight >= JUST_CREATED) {
-      return "rgba(255, 0, 0, 0.8)"; // red
-    } else if (weight >= RECENT) {
-      return "rgba(255, 127, 0, 0.8)"; // orange
-    } else if (weight >= WHILE_AGO) {
-      return "rgba(255, 255, 0, 0.8)"; // yellow
-    } else if (weight >= OLD) {
-      return "rgba(0, 0, 255, 0.8)"; // blue
-    }
+  const getColor = (decay: number) => {
+    // decay red (0) to blue (240)
+    const hue = 240 * (1 - decay);
 
-    // ancient now, dark blue
-    return "rgba(0, 0, 139, 0.8)";
+    return `hsl(${hue}, 100%, 50%)`;
   };
 
   return (
@@ -64,8 +49,8 @@ export default function LeafletHeatMap({
           key={point.id}
           center={[point.lat, point.lng]}
           color="rgba(0,0,0,0.3)"
-          fillColor={getColor(point.weight)}
-          fillOpacity={0.8}
+          fillColor={getColor(point.decay)}
+          fillOpacity={point.opacity}
           pane="overlayPane"
           radius={radius}
           weight={0}
