@@ -17,6 +17,7 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
+  Textarea,
 } from "@heroui/react";
 import { useRouter } from "next/navigation";
 
@@ -24,6 +25,7 @@ import { createReport, getReports, InspectorReport } from "@/supabase/reports";
 import LeafletMapWrapper from "@/components/leaflet/map-wrapper";
 import { useAuth } from "@/context/auth-context";
 
+const MAX_DESCRIPTION_LENGTH = 100;
 const TOAST_TIMEOUT = 3000;
 const LOCATION_TIMEOUT = 25000;
 const MELBOURNE_CBD = {
@@ -190,7 +192,7 @@ export default function InspectorMap() {
       errorCallback,
       user,
       userLocation,
-      description,
+      description.slice(0, MAX_DESCRIPTION_LENGTH),
       inspectorReports,
     );
 
@@ -258,7 +260,7 @@ export default function InspectorMap() {
                 Report
               </Button>
               <Modal
-                className="blurred"
+                backdrop="blur"
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
               >
@@ -276,11 +278,13 @@ export default function InspectorMap() {
                               you&apos;ve spotted. This helps other commuters
                               stay informed.
                             </p>
-                            <textarea
-                              className="w-full p-2 border border-gray-300 rounded-md"
-                              placeholder="Description (e.g. Number of inspectors, location details, uniform colors)"
+                            <Textarea
+                              isRequired
+                              label="Description"
+                              placeholder="(e.g. Number of inspectors, what tram or train, location details, where they were headed)"
                               rows={4}
                               value={description}
+                              variant="bordered"
                               onChange={(e) => setDescription(e.target.value)}
                             />
                           </>
