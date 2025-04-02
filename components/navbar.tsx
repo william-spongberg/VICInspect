@@ -51,7 +51,7 @@ export const Navbar = () => {
               <NextLink
                 className={clsx(
                   linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium",
+                  "data-[active=true]:text-primary data-[active=true]:font-medium"
                 )}
                 color="foreground"
                 href={item.href}
@@ -63,7 +63,7 @@ export const Navbar = () => {
         </ul>
       </NavbarContent>
 
-      <NavbarContent className="" justify="end">
+      <NavbarContent className="basis-1/5 sm:basis-full" justify="end">
         <NavbarItem className="flex gap-2">
           <Link isExternal aria-label="Github" href={siteConfig.links.github}>
             <GithubIcon className="text-default-500" />
@@ -93,18 +93,18 @@ export const Navbar = () => {
               <DropdownItem key="settings" href="/dashboard">
                 Dashboard
               </DropdownItem>
-              <DropdownItem key="help_and_feedback">
+              {/* <DropdownItem key="help_and_feedback">
                 Help & Feedback
-              </DropdownItem>
+              </DropdownItem> */}
               <DropdownItem key="logout" color="danger" onPress={signOut}>
                 Sign Out
               </DropdownItem>
             </DropdownMenu>
           ) : (
             <DropdownMenu aria-label="Profile Actions" variant="light">
-              <DropdownItem key="help_and_feedback">
+              {/* <DropdownItem key="help_and_feedback">
                 Help & Feedback
-              </DropdownItem>
+              </DropdownItem> */}
               <DropdownItem key="login" color="success" href="/signin">
                 Sign In
               </DropdownItem>

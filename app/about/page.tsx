@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardHeader, CardBody, Button } from "@heroui/react";
+import { Card, CardHeader, CardBody, Button, Link } from "@heroui/react";
 import { FaMap, FaLocationArrow, FaSubway, FaDatabase } from "react-icons/fa";
 import { SiNextdotjs, SiHeroku, SiVercel, SiSupabase } from "react-icons/si";
 import { useRouter } from "next/navigation";
@@ -22,10 +22,17 @@ export default function AboutPage() {
             users to readjust their trips accordingly. It will forever remain a
             free, highly accessible and useful tool for all Melbourne commuters.
           </p>
-          <div className="max-w-4xl items-center justify-center text-center my-10 p-4 bg-amber-100 dark:bg-amber-900/30 border-l-4 border-amber-500 rounded">
-            <p className="text-amber-800 dark:text-amber-200 items-center justify-center text-center">
+          <div className="max-w-4xl mx-auto my-10 p-4 bg-amber-100 dark:bg-amber-900/30 border-l-4 border-amber-500 rounded">
+            <p className="text-amber-800 dark:text-amber-200">
               <strong>NOTE:</strong> Currently a work in progress! You can help
-              by sharing this website or starring the project on GitHub.
+              by sharing this website or starring the project on{" "}
+              <Link
+                isExternal
+                className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                href="https://github.com/william-spongberg/transit-eye"
+              >
+                GitHub.
+              </Link>
             </p>
           </div>
         </div>
@@ -33,7 +40,7 @@ export default function AboutPage() {
 
       <div className="container mx-auto px-6 max-w-4xl">
         <section className="w-full py-12">
-          <h2 className={title({ size: "md", color: "blue" })}>Features</h2>
+          <h2 className={title({ size: "md", color: "blue" })}>Tools Used</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
             <Card className="border-2 border-blue-400 dark:border-blue-600">
               <CardHeader className="flex gap-3 bg-blue-100 dark:bg-blue-900/30">
@@ -98,7 +105,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="w-full py-16 my-10 -mx-6 px-6 rounded-xl">
+        <section className="max-w-5xl py-16 my-10 -mx-6 px-6 rounded-xl">
           <h2 className={title({ size: "md", color: "blue" })}>Tech Stack</h2>
           <p className={subtitle()}>
             Built with modern web technologies for performance and scalability
@@ -158,7 +165,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="w-full py-12">
+        <section className="max-w-5xl py-12">
           <h2 className={title({ size: "md", color: "blue" })}>Roadmap</h2>
           <p className={subtitle()}>
             Our development plan for future improvements
@@ -177,15 +184,6 @@ export default function AboutPage() {
             </Card>
 
             <Card className="border border-default-200 shadow-sm">
-              <CardHeader className="flex gap-3 bg-green-100/50 dark:bg-green-900/20">
-                <h4 className="font-semibold">Facebook Auth</h4>
-              </CardHeader>
-              <CardBody>
-                <p>Add Facebook authentication using Supabase</p>
-              </CardBody>
-            </Card>
-
-            <Card className="border border-default-200 shadow-sm">
               <CardHeader className="flex gap-3 bg-purple-100/50 dark:bg-purple-900/20">
                 <h4 className="font-semibold">Leaderboard System</h4>
               </CardHeader>
@@ -198,21 +196,18 @@ export default function AboutPage() {
             </Card>
 
             <Card className="border border-default-200 shadow-sm">
-              <CardHeader className="flex gap-3 bg-amber-100/50 dark:bg-amber-900/20">
-                <h4 className="font-semibold">Report Descriptions</h4>
+              <CardHeader className="flex gap-3 bg-green-100/50 dark:bg-green-900/20">
+                <h4 className="font-semibold">Facebook Auth</h4>
               </CardHeader>
               <CardBody>
-                <p>
-                  Add descriptions for reports or link to Facebook group posts -
-                  need to consider storage costs
-                </p>
+                <p>Add Facebook authentication using Supabase</p>
               </CardBody>
             </Card>
           </div>
         </section>
       </div>
 
-      <section className="w-screen py-10 mt-12">
+      <section className="max-w-5xl py-10 mt-12">
         <div className="max-w-5xl mx-auto px-4 text-center">
           <h3 className={title({ color: "blue", size: "sm" })}>
             Interested in helping?
@@ -225,7 +220,9 @@ export default function AboutPage() {
             <Button
               color="primary"
               size="lg"
-              onPress={() => router.push("/map")}
+              onPress={() =>
+                router.push("https://github.com/william-spongberg/transit-eye")
+              }
             >
               View the Source on Github
             </Button>

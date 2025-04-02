@@ -10,7 +10,7 @@ export default function PrivacyPage() {
       </div>
 
       <p className={subtitle({})}>
-        PTV Inspector Tracker is committed to providing quality services to you,
+        Transit Eye is committed to providing quality services to you,
         and this policy outlines our ongoing obligations to you in respect of
         how we manage your Personal Information.
       </p>
@@ -163,7 +163,7 @@ export default function PrivacyPage() {
       </p>
 
       <p className={subtitle({})}>
-        PTV Inspector Tracker will not charge any fee for your access request,
+        Transit Eye will not charge any fee for your access request,
         but we may charge an administrative fee for providing a copy of your
         Personal Information.
       </p>

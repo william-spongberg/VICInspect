@@ -112,7 +112,7 @@ CREATE TABLE subscriptions (
 
 ## How to Contribute
 
-We welcome contributions from the community to improve PTV Inspector Tracker!
+We welcome contributions from the community to improve Transit Eye!
 
 ### Contribution Process
 

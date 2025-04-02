@@ -1,7 +1,7 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "PTV Inspector Tracker",
+  name: "Transit Eye",
   description: "Track, avoid and report PTV Inspectors in real-time.",
   navItems: [
     {
@@ -32,6 +32,6 @@ export const siteConfig = {
     },
   ],
   links: {
-    github: "https://github.com/william-spongberg/ptv-inspector-tracker",
+    github: "https://github.com/william-spongberg/transit-eye",
   },
 };

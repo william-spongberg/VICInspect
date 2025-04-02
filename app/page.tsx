@@ -6,13 +6,14 @@ import {
   FaMapMarkerAlt,
   FaUserShield,
   FaClock,
-  FaBell,
   FaExclamationTriangle,
   FaChartBar,
 } from "react-icons/fa";
 import { SiLeaflet } from "react-icons/si";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+
+import InspectorMap from "./map/page";
 
 import { title, subtitle } from "@/components/primitives";
 import { useAuth } from "@/context/auth-context";
@@ -78,9 +79,7 @@ export default function Home() {
               width={120}
             />
           </div>
-          <h1 className={title({ color: "blue", size: "lg" })}>
-            PTV Inspector Tracker
-          </h1>
+          <h1 className={title({ color: "blue", size: "lg" })}>Transit Eye</h1>
           <p className={`${subtitle()} max-w-3xl mx-auto mt-6 mb-10 text-lg`}>
             Real-time tracking and reporting of Public Transport Victoria
             inspectors to help commuters avoid unwanted encounters and unfair
@@ -143,7 +142,7 @@ export default function Home() {
                       : getDangerLevelColor(dangerLevel),
                   }}
                 />
-                <h3 className="text-lg font-bold">Inspector Danger Level</h3>
+                <h3 className="text-lg font-bold">Inspector Activity</h3>
                 {isLoading ? (
                   <div className="animate-pulse bg-default-200 h-8 w-24 rounded-lg mt-2" />
                 ) : (
@@ -218,15 +217,15 @@ export default function Home() {
 
           <Card className="border-2 border-purple-400 dark:border-purple-600">
             <CardHeader className="flex gap-3 bg-purple-100 dark:bg-purple-900/30">
-              <FaBell className="text-purple-600 dark:text-purple-400 text-xl" />
+              <FaUserShield className="text-purple-600 dark:text-purple-400 text-xl" />
               <h4 className="font-semibold text-purple-700 dark:text-purple-300">
-                Push Notifications
+                Community Driven
               </h4>
             </CardHeader>
             <CardBody>
               <p>
-                Subscribe to receive alerts when inspectors are reported in your
-                area.
+                Free and open-source project on Github, allowing anyone to
+                contribute and improve the platform.
               </p>
             </CardBody>
           </Card>
@@ -256,14 +255,7 @@ export default function Home() {
           <div className="w-full order-1 lg:order-2 relative px-4">
             <div className="aspect-video relative bg-default-200 dark:bg-default-700 rounded-xl overflow-hidden w-full">
               {/* Heatmap Blots */}
-              <div className="absolute inset-0">
-                <div className="absolute top-10 left-20 w-10 h-10 rounded-full bg-red-400 opacity-60 blur-sm" />
-                <div className="absolute bottom-12 right-16 w-16 h-16 rounded-full bg-orange-400 opacity-60 blur-xl" />
-                <div className="absolute top-1/2 left-1/4 w-8 h-8 rounded-full bg-blue-400 opacity-60 blur-md" />
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <FaMapMarkerAlt className="text-primary/50" size={60} />
-              </div>
+              <InspectorMap disableControls />
             </div>
           </div>
         </div>
@@ -276,11 +268,11 @@ export default function Home() {
         <p className={subtitle()}>Built by the community, for the community</p>
         <div className="mt-6">
           <p className="mb-4">
-            The PTV Inspector Tracker was created in response to growing
-            concerns about how Public Transport Victoria inspectors interact
-            with passengers. Our goal is to provide a transparent platform where
-            commuters can report inspector locations and help others adjust
-            their travel plans if needed.
+            The Transit Eye was created in response to growing concerns about
+            how Public Transport Victoria inspectors interact with passengers.
+            Our goal is to provide a transparent platform where commuters can
+            report inspector locations and help others adjust their travel plans
+            if needed.
           </p>
           <Button
             color="primary"

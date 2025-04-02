@@ -56,7 +56,7 @@ interface PopupInfoProps {
 function PopupInfo({ report, userId, errorCallback }: PopupInfoProps) {
   const createdAt = new Date(report.created_at);
   const minutesAgo = Math.floor(
-    (Date.now() - createdAt.getTime()) / (1000 * 60)
+    (Date.now() - createdAt.getTime()) / (1000 * 60),
   );
 
   // convert to human readable time
@@ -79,7 +79,7 @@ function PopupInfo({ report, userId, errorCallback }: PopupInfoProps) {
   };
 
   return (
-    <Card fullWidth shadow="none" className={"w-[300px] bg-white"}>
+    <Card fullWidth className={"w-[300px] bg-white"} shadow="none">
       <CardHeader className="flex justify-center items-center pb-2">
         <div className="flex items-center space-x-3">
           <Button color="success" variant="ghost" onPress={handleUpvote}>
@@ -97,7 +97,7 @@ function PopupInfo({ report, userId, errorCallback }: PopupInfoProps) {
       </CardHeader>
       <Divider />
       <CardBody>
-        <p className="text-sm text-black font-bold">
+        <div className="text-sm text-black font-bold">
           {reportedText} at{" "}
           {createdAt.toLocaleTimeString("en-AU", {
             hour: "2-digit",
@@ -109,7 +109,7 @@ function PopupInfo({ report, userId, errorCallback }: PopupInfoProps) {
               {report.user_name ?? "Unknown user"}
             </span>
           </p>
-        </p>
+        </div>
         <p className="text-sm text-black">
           {report.description ?? "No description provided"}
         </p>

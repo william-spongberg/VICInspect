@@ -140,7 +140,12 @@ export default function Dashboard() {
               </span>
             </p>
           </div>
-          <Button color="danger" variant="light" onPress={signOut} className="mt-2 sm:mt-0">
+          <Button
+            className="mt-2 sm:mt-0"
+            color="danger"
+            variant="light"
+            onPress={signOut}
+          >
             Sign Out
           </Button>
         </CardHeader>
@@ -153,22 +158,23 @@ export default function Dashboard() {
               <h3
                 className={subtitle({
                   fullWidth: true,
-                  class: "!my-3 !text-xl font-semibold text-center sm:text-left",
+                  class:
+                    "!my-3 !text-xl font-semibold text-center sm:text-left",
                 })}
               >
                 Account Information
               </h3>
               <div className="space-y-3">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
-                  <span className="font-medium text-base w-28">User ID:</span>
-                  <Chip size="lg" variant="flat" className="w-full sm:w-auto overflow-hidden">
-                    <span className="truncate">{user.id}</span>
-                  </Chip>
-                </div>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
                   <span className="font-medium text-base w-28">Email:</span>
-                  <Chip color="primary" size="lg" variant="flat" className="w-full sm:w-auto overflow-hidden">
-                    <span className="truncate">{user.email ?? "No email provided"}</span>
+                  <Chip
+                    className="w-full sm:w-auto overflow-hidden"
+                    size="lg"
+                    variant="bordered"
+                  >
+                    <span className="truncate">
+                      {user.email ?? "No email provided"}
+                    </span>
                   </Chip>
                 </div>
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
@@ -182,7 +188,8 @@ export default function Dashboard() {
               <h3
                 className={subtitle({
                   fullWidth: true,
-                  class: "!my-3 !text-xl font-semibold text-center sm:text-left",
+                  class:
+                    "!my-3 !text-xl font-semibold text-center sm:text-left",
                 })}
               >
                 Notifications

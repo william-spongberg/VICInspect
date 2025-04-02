@@ -17,7 +17,7 @@ export default function Footer() {
           </Link>
         </div>
         <p className="text-sm text-gray-600">
-          &copy; {new Date().getFullYear()} PTV Inspector Tracker. All rights
+          &copy; {new Date().getFullYear()} William Spongberg. All rights
           reserved.
         </p>
 
