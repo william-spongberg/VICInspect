@@ -5,6 +5,7 @@
 - add report types and logos: inspectors, dangerous people, unclean, etc
 - subscribe to updates from database rather than manually refreshing
 - leaderboard
+- blue dot at user location for clarity, red marker seperate
 - user respectability based on number of votes earnt (like reddit karma)
 - public user profiles + add users to public user table on signup (use db triggers) - <https://github.com/orgs/supabase/discussions/306#discussioncomment-138424>
 - add reports made to dashboard
