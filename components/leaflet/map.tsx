@@ -29,10 +29,10 @@ export const reportIcon = L.icon({
 const TILE_LAYER = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 const MAP_ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
-const DEFAULT_ZOOM = 15;
+const DEFAULT_ZOOM = 14;
 
 export const MAX_ZOOM = 18;
-export const MIN_ZOOM = 9;
+export const MIN_ZOOM = 10;
 
 export interface LeafletMapProps {
   geoLocation: GeolocationPosition | null;
@@ -91,6 +91,10 @@ export default function LeafletMap({
         center={[userLocation.lat, userLocation.lng]}
         className="w-full h-full z-[1]"
         dragging={true}
+        maxBounds={[
+          [-39.159, 140.961],
+          [-33.98, 150.039],
+        ]}
         maxZoom={MAX_ZOOM}
         minZoom={MIN_ZOOM}
         scrollWheelZoom={true}
