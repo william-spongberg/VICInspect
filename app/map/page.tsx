@@ -189,11 +189,11 @@ export default function InspectorMap() {
 
     // report inspector location - if dragged report 100m accuracy
     const success = await createReport(
-      errorCallback,
       user,
       userLocation,
       description.slice(0, MAX_DESCRIPTION_LENGTH),
       inspectorReports,
+      errorCallback,
     );
 
     // if successfully, send toast and refresh reports
