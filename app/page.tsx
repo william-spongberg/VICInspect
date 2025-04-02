@@ -79,7 +79,7 @@ export default function Home() {
               width={120}
             />
           </div>
-          <h1 className={title({ color: "blue", size: "lg" })}>Transit Eye</h1>
+          <h1 className={title({ color: "blue", size: "lg" })}>TransitEye</h1>
           <p className={`${subtitle()} max-w-3xl mx-auto mt-6 mb-10 text-lg`}>
             Real-time tracking and reporting of Public Transport Victoria
             inspectors to help commuters avoid unwanted encounters and unfair
@@ -268,7 +268,7 @@ export default function Home() {
         <p className={subtitle()}>Built by the community, for the community</p>
         <div className="mt-6">
           <p className="mb-4">
-            The Transit Eye was created in response to growing concerns about
+            The TransitEye was created in response to growing concerns about
             how Public Transport Victoria inspectors interact with passengers.
             Our goal is to provide a transparent platform where commuters can
             report inspector locations and help others adjust their travel plans

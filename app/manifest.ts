@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Transit Eye",
+    name: "TransitEye",
     short_name: "TransitEye",
     description: "Track PTV Inspectors in real-time",
     start_url: "/",

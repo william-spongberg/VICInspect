@@ -1,7 +1,7 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "Transit Eye",
+  name: "TransitEye",
   description: "Track, avoid and report PTV Inspectors in real-time.",
   navItems: [
     {
