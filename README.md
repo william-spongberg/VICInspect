@@ -1,4 +1,4 @@
-# PTV Inspector Tracker
+# VICInspect
 
 Track and report Public Transport Victoria inspectors in real-time to help commuters avoid unfair treatment.
 
