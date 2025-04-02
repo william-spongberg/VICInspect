@@ -166,12 +166,11 @@ We welcome contributions from the community to improve TransitEye!
 
 ### Development Roadmap Items
 
-Interested contributors can help with these planned features:
+Interested contributors can help with the items in the [TODO.md](TODO.md) file. Feel free to pick any item and start working on it. If you have an idea for a new feature, please open an issue to discuss it before starting development.
 
-- PTV API integration for vehicle tracking
-- Leaderboard system development
-- Report description functionality
-- Push notification improvements
+### Reporting Issues
+
+If you encounter any bugs or issues, please open an issue in the repository. Provide as much detail as possible, including steps to reproduce the issue and any relevant screenshots.
 
 ## License
 
