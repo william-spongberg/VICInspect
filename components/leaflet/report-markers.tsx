@@ -1,9 +1,17 @@
 import { Marker, Popup } from "react-leaflet";
-import { Button } from "@heroui/react";
+import {
+  Button,
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Divider,
+} from "@heroui/react";
 
 import { reportIcon } from "./map";
 
-import { InspectorReport, voteReport } from "@/supabase/reports";
+import { InspectorReport } from "@/supabase/reports";
+import { vote } from "@/supabase/votes";
 
 export interface InspectorReportProps {
   reports: InspectorReport[];
@@ -48,7 +56,7 @@ interface PopupInfoProps {
 function PopupInfo({ report, userId, errorCallback }: PopupInfoProps) {
   const createdAt = new Date(report.created_at);
   const minutesAgo = Math.floor(
-    (Date.now() - createdAt.getTime()) / (1000 * 60),
+    (Date.now() - createdAt.getTime()) / (1000 * 60)
   );
 
   // convert to human readable time
@@ -63,57 +71,54 @@ function PopupInfo({ report, userId, errorCallback }: PopupInfoProps) {
   }
 
   const handleUpvote = async () => {
-    await voteReport(report.id, userId, true, errorCallback);
+    await vote(report.id, userId, true, errorCallback);
   };
 
   const handleDownvote = async () => {
-    await voteReport(report.id, userId, false, errorCallback);
+    await vote(report.id, userId, false, errorCallback);
   };
 
   return (
-    <div className="p-2">
-      <div className="flex items-center mb-2">
-        <div className="flex items-center space-x-3 mx-auto">
+    <Card fullWidth shadow="none" className={"w-[300px] bg-white"}>
+      <CardHeader className="flex justify-center items-center pb-2">
+        <div className="flex items-center space-x-3">
           <Button color="success" variant="ghost" onPress={handleUpvote}>
             👍
           </Button>
-          {report.votes > 0 ? (
-            <div className="font-bold text-green-500 text-large mx-auto">
-              {report.votes}
-            </div>
-          ) : (
-            <div className="font-bold text-red-500 text-large mx-auto">
-              {report.votes}
-            </div>
-          )}
+          <div
+            className={`font-bold text-large ${report.votes > 0 ? "text-green-500" : "text-red-500"}`}
+          >
+            {report.votes}
+          </div>
           <Button color="danger" variant="ghost" onPress={handleDownvote}>
             👎
           </Button>
         </div>
-      </div>
-      <div className="mb-2 font-bold text-gray-700">
-        {reportedText} at{" "}
-        {createdAt.toLocaleTimeString("en-AU", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })}
-      </div>
-      <div className="mb-2 text-gray-800">
-        by{" "}
-        <span className="font-semibold">
-          {report.user_name ?? "Unknown user"}
-        </span>
-      </div>
-      <div className="p-3 mb-1 bg-blue-50 rounded-md shadow">
-        <div className="mb-2">
+      </CardHeader>
+      <Divider />
+      <CardBody>
+        <p className="text-sm text-black font-bold">
+          {reportedText} at{" "}
+          {createdAt.toLocaleTimeString("en-AU", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+          <p className="text-sm text-gray-500">
+            by{" "}
+            <span className="font-semibold">
+              {report.user_name ?? "Unknown user"}
+            </span>
+          </p>
+        </p>
+        <p className="text-sm text-black">
           {report.description ?? "No description provided"}
-        </div>
-      </div>
-      <div className="text-right">
+        </p>
+      </CardBody>
+      <CardFooter className="flex justify-end pt-1">
         <span className="text-[0.6rem] text-gray-400 italic">
           {report.id} | {report.user_id}
         </span>
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   );
 }
