@@ -30,15 +30,20 @@ export async function vote(
       if (existingVote.upvote === upvote) {
         // if user already voted this way, delete the vote
         await deleteVote(reportId, userId);
+        // if upvote, decrement report votes, else increment
+        await setReportVotes(reportId, !upvote);
+        return true;
       } else {
         // if user already voted but with different upvote/downvote, update the vote
         await updateVote(reportId, userId, upvote);
+        // increment or decrement report votes
+        await setReportVotes(reportId, upvote);
+        return true;
       }
     }
 
     // otherwise, its a new vote to insert
     await insertVote(reportId, userId, upvote);
-
     // increment or decrement report votes
     await setReportVotes(reportId, upvote);
 
