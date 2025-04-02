@@ -33,13 +33,7 @@ const MELBOURNE_CBD = {
   lng: 144.9631,
 };
 
-interface InspectorMapProps {
-  disableControls?: boolean;
-}
-
-export default function InspectorMap({
-  disableControls = false,
-}: InspectorMapProps) {
+export default function InspectorMap() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [geoLocation, setGeoLocation] = useState<GeolocationPosition | null>(
     null
@@ -241,105 +235,103 @@ export default function InspectorMap({
             userLocation={userLocation}
             onLocationChange={handleLocationChange}
           />
-          {!disableControls && (
-            <CardFooter className="flex flex-col gap-4 pt-0 overflow-hidden absolute bottom-5 left-1/2 transform -translate-x-1/2 before:rounded-xl rounded-large w-[calc(100%-8px)] lg:w-auto z-10">
-              <div className="flex flex-row gap-4 w-full">
-                <Button
-                  aria-label="Refresh"
-                  className="w-full sm:w-auto text-xl"
-                  color="primary"
-                  isLoading={isRefreshing}
-                  startContent={!isRefreshing && <FaSyncAlt />}
-                  variant="light"
-                  onPress={refresh}
-                >
-                  Refresh
-                </Button>
-                <Button
-                  aria-label="Report Inspector"
-                  className="w-full sm:w-auto text-xl"
-                  color="danger"
-                  isLoading={isReporting}
-                  startContent={!isReporting && <FaExclamationCircle />}
-                  variant="ghost"
-                  onPress={onOpen}
-                >
-                  Report
-                </Button>
-                <Modal
-                  backdrop="blur"
-                  isOpen={isOpen}
-                  onOpenChange={onOpenChange}
-                >
-                  <ModalContent>
-                    {(onClose) => (
-                      <>
-                        <ModalHeader className="flex flex-col gap-4 ">
-                          Report Inspector Sighting
-                        </ModalHeader>
-                        <ModalBody>
-                          {user ? (
-                            <>
-                              <p>
-                                Please provide details about the inspector(s)
-                                you&apos;ve spotted. This helps other commuters
-                                stay informed.
-                              </p>
-                              <Textarea
-                                isRequired
-                                label="Description"
-                                placeholder="(e.g. Number of inspectors, what tram or train, location details, where they were headed)"
-                                rows={4}
-                                value={description}
-                                variant="bordered"
-                                onChange={(e) => setDescription(e.target.value)}
-                              />
-                            </>
-                          ) : (
-                            <>
-                              <p>
-                                You need to be signed in to report inspector
-                                sightings. Please sign in to continue.
-                              </p>
-                            </>
-                          )}
-                        </ModalBody>
-                        <ModalFooter>
+          <CardFooter className="flex flex-col gap-4 pt-0 overflow-hidden absolute bottom-5 left-1/2 transform -translate-x-1/2 before:rounded-xl rounded-large w-[calc(100%-8px)] lg:w-auto z-10">
+            <div className="flex flex-row gap-4 w-full">
+              <Button
+                aria-label="Refresh"
+                className="w-full sm:w-auto text-xl"
+                color="primary"
+                isLoading={isRefreshing}
+                startContent={!isRefreshing && <FaSyncAlt />}
+                variant="light"
+                onPress={refresh}
+              >
+                Refresh
+              </Button>
+              <Button
+                aria-label="Report Inspector"
+                className="w-full sm:w-auto text-xl"
+                color="danger"
+                isLoading={isReporting}
+                startContent={!isReporting && <FaExclamationCircle />}
+                variant="ghost"
+                onPress={onOpen}
+              >
+                Report
+              </Button>
+              <Modal
+                backdrop="blur"
+                isOpen={isOpen}
+                onOpenChange={onOpenChange}
+              >
+                <ModalContent>
+                  {(onClose) => (
+                    <>
+                      <ModalHeader className="flex flex-col gap-4 ">
+                        Report Inspector Sighting
+                      </ModalHeader>
+                      <ModalBody>
+                        {user ? (
+                          <>
+                            <p>
+                              Please provide details about the inspector(s)
+                              you&apos;ve spotted. This helps other commuters
+                              stay informed.
+                            </p>
+                            <Textarea
+                              isRequired
+                              label="Description"
+                              placeholder="(e.g. Number of inspectors, what tram or train, location details, where they were headed)"
+                              rows={4}
+                              value={description}
+                              variant="bordered"
+                              onChange={(e) => setDescription(e.target.value)}
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <p>
+                              You need to be signed in to report inspector
+                              sightings. Please sign in to continue.
+                            </p>
+                          </>
+                        )}
+                      </ModalBody>
+                      <ModalFooter>
+                        <Button
+                          color="danger"
+                          variant="light"
+                          onPress={onClose}
+                        >
+                          Cancel
+                        </Button>
+                        {user ? (
                           <Button
-                            color="danger"
-                            variant="light"
-                            onPress={onClose}
+                            color="primary"
+                            isDisabled={!description.trim()}
+                            isLoading={isReporting}
+                            onPress={() => {
+                              onClose();
+                              handleReportInspector();
+                            }}
                           >
-                            Cancel
+                            Report Inspector
                           </Button>
-                          {user ? (
-                            <Button
-                              color="primary"
-                              isDisabled={!description.trim()}
-                              isLoading={isReporting}
-                              onPress={() => {
-                                onClose();
-                                handleReportInspector();
-                              }}
-                            >
-                              Report Inspector
-                            </Button>
-                          ) : (
-                            <Button
-                              color="primary"
-                              onPress={() => router.push("/signin")}
-                            >
-                              Sign In
-                            </Button>
-                          )}
-                        </ModalFooter>
-                      </>
-                    )}
-                  </ModalContent>
-                </Modal>
-              </div>
-            </CardFooter>
-          )}
+                        ) : (
+                          <Button
+                            color="primary"
+                            onPress={() => router.push("/signin")}
+                          >
+                            Sign In
+                          </Button>
+                        )}
+                      </ModalFooter>
+                    </>
+                  )}
+                </ModalContent>
+              </Modal>
+            </div>
+          </CardFooter>
         </Card>
       </div>
     </>

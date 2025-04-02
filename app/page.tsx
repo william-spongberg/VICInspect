@@ -13,8 +13,6 @@ import { SiLeaflet } from "react-icons/si";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
-import InspectorMap from "./map/page";
-
 import { title, subtitle } from "@/components/primitives";
 import { useAuth } from "@/context/auth-context";
 import {
@@ -255,7 +253,14 @@ export default function Home() {
           <div className="w-full order-1 lg:order-2 relative px-4">
             <div className="aspect-video relative bg-default-200 dark:bg-default-700 rounded-xl overflow-hidden w-full">
               {/* Heatmap Blots */}
-              <InspectorMap disableControls />
+              <div className="absolute inset-0">
+                <div className="absolute top-10 left-20 w-10 h-10 rounded-full bg-red-400 opacity-60 blur-sm" />
+                <div className="absolute bottom-12 right-16 w-16 h-16 rounded-full bg-orange-400 opacity-60 blur-xl" />
+                <div className="absolute top-1/2 left-1/4 w-8 h-8 rounded-full bg-blue-400 opacity-60 blur-md" />
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <FaMapMarkerAlt className="text-primary/50" size={60} />
+              </div>
             </div>
           </div>
         </div>
@@ -268,11 +273,11 @@ export default function Home() {
         <p className={subtitle()}>Built by the community, for the community</p>
         <div className="mt-6">
           <p className="mb-4">
-            The TransitEye was created in response to growing concerns about
-            how Public Transport Victoria inspectors interact with passengers.
-            Our goal is to provide a transparent platform where commuters can
-            report inspector locations and help others adjust their travel plans
-            if needed.
+            The TransitEye was created in response to growing concerns about how
+            Public Transport Victoria inspectors interact with passengers. Our
+            goal is to provide a transparent platform where commuters can report
+            inspector locations and help others adjust their travel plans if
+            needed.
           </p>
           <Button
             color="primary"
