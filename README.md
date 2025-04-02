@@ -1,4 +1,4 @@
-# VICInspect
+# Transit Eye
 
 Track and report Public Transport Victoria inspectors in real-time to help commuters avoid unfair treatment.
 
