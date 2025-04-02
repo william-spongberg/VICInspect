@@ -1,6 +1,7 @@
 # TODO
 
 - rate limiting for users through vercel
+- subscribe to updates from database rather than manually refreshing
 - leaderboard
 - user respectability based on number of votes earnt (like reddit karma)
 - public user profiles + add users to public user table on signup (use db triggers)
