@@ -19,7 +19,6 @@ Due to concerns about how Public Transport Victoria inspectors have been treatin
 
 - 🗺️ **Interactive Map**: Real-time inspector locations using Leaflet and OpenStreetMap
 - 🔄 **Real-Time Updates**: Immediate updates on inspector reports from community users
-- 📱 **Push Notifications**: Subscribe to receive alerts about inspectors in your area
 - 📊 **Statistics Dashboard**: View report counts and danger levels
 - 🔒 **Authentication**: Secure sign-in with GitHub and Google
 
@@ -28,6 +27,7 @@ Due to concerns about how Public Transport Victoria inspectors have been treatin
 - 🚆 **PTV API Integration**: Track trams, trains, and buses with inspector reports attached
 - 📊 **Leaderboard System**: View top contributors and most upvoted reports
 - 📝 **Report Descriptions**: Add detailed descriptions and facebook post links to inspector reports
+- 📱 **Push Notifications**: Subscribe to receive alerts about inspectors in your area
 - 🔑 **Additional Authentication Methods**
 
 ## Tech Stack
