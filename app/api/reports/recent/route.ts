@@ -1,7 +1,7 @@
 import { getReports } from "@/supabase/reports";
 
 export const runtime = "edge";
-export const revalidate = 60; // 1 minute
+export const revalidate = 0; // disabled for now
 
 export async function GET() {
   try {
