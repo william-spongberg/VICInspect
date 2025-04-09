@@ -36,14 +36,14 @@ const MELBOURNE_CBD = {
 export default function InspectorMap() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [geoLocation, setGeoLocation] = useState<GeolocationPosition | null>(
-    null
+    null,
   );
   const [userLocation, setUserLocation] = useState<{
     lat: number;
     lng: number;
   }>(MELBOURNE_CBD);
   const [inspectorReports, setInspectorReports] = useState<InspectorReport[]>(
-    []
+    [],
   );
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isReporting, setIsReporting] = useState(false);
@@ -90,7 +90,7 @@ export default function InspectorMap() {
           // boo error
           clearTimeout(timeoutId);
           error(e);
-        }
+        },
       );
     } else {
       console.error("Geolocation is not supported by this browser.");
@@ -193,7 +193,7 @@ export default function InspectorMap() {
       userLocation,
       description.slice(0, MAX_DESCRIPTION_LENGTH),
       inspectorReports,
-      errorCallback
+      errorCallback,
     );
 
     // if successfully, send toast and refresh reports

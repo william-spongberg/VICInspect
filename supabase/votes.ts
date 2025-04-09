@@ -6,6 +6,7 @@ export type ReportVote = {
   report_id: number;
   user_id: string;
   upvote: boolean;
+  disabled: boolean;
 };
 
 export const DB_VOTES_TABLE = "report_votes";
@@ -28,18 +29,28 @@ export async function vote(
     const existingVote = await checkAlreadyVoted(reportId, userId);
 
     if (existingVote) {
-      if (existingVote.upvote === upvote) {
-        // if user already voted this way, delete the vote
-        await deleteVote(reportId, userId);
-        // if upvote, decrement report votes, else increment
-        await setReportVotes(reportId, !upvote);
+      if (existingVote.upvote === upvote){
+        if (!existingVote.disabled) {
+          // if user already voted this way, disable the vote
+          await disableVote(reportId, userId);
+          // remove vote from count
+          await setVoteCount(reportId, !upvote);
 
-        return true;
+          return true;
+        } else {
+          // if user already voted but disabled, enable the vote
+          await enableVote(reportId, userId);
+          // increment or decrement vote count
+          await setVoteCount(reportId, upvote);
+
+          return true;
+        }
       } else {
         // if user already voted but with different upvote/downvote, update the vote
         await updateVote(reportId, userId, upvote);
-        // increment or decrement report votes
-        await setReportVotes(reportId, upvote);
+        // increment or decrement vote count twice to update the vote
+        await setVoteCount(reportId, upvote);
+        await setVoteCount(reportId, upvote);
 
         return true;
       }
@@ -48,7 +59,7 @@ export async function vote(
     // otherwise, its a new vote to insert
     await insertVote(reportId, userId, upvote);
     // increment or decrement report votes
-    await setReportVotes(reportId, upvote);
+    await setVoteCount(reportId, upvote);
 
     return true;
   } catch (error) {
@@ -107,6 +118,7 @@ export async function insertVote(
     report_id: reportId,
     user_id: userId,
     upvote: upvote,
+    disabled: false,
   });
 
   if (error) throw error;
@@ -122,7 +134,7 @@ export async function updateVote(
 ): Promise<boolean> {
   const { error } = await supabase
     .from(DB_VOTES_TABLE)
-    .update({ upvote: upvote })
+    .update({ upvote: upvote, disabled: false })
     .eq("user_id", userId)
     .eq("report_id", reportId);
 
@@ -131,14 +143,30 @@ export async function updateVote(
   return true;
 }
 
-// delete cast vote
-export async function deleteVote(
+// enable vote
+export async function enableVote(
   reportId: number,
   userId: string,
 ): Promise<boolean> {
   const { error } = await supabase
     .from(DB_VOTES_TABLE)
-    .delete()
+    .update({ disabled: false })
+    .eq("user_id", userId)
+    .eq("report_id", reportId);
+
+  if (error) throw error;
+
+  return true;
+}
+
+// disable vote
+export async function disableVote(
+  reportId: number,
+  userId: string,
+): Promise<boolean> {
+  const { error } = await supabase
+    .from(DB_VOTES_TABLE)
+    .update({ disabled: true})
     .eq("user_id", userId)
     .eq("report_id", reportId);
 
@@ -148,7 +176,7 @@ export async function deleteVote(
 }
 
 // increment or decrement report votes using supabase function
-export async function setReportVotes(
+export async function setVoteCount(
   reportId: number,
   upvote: boolean,
 ): Promise<boolean> {
